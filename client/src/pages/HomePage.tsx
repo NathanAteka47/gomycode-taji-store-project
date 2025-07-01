@@ -19,6 +19,7 @@ export default function HomePage() {
         <h2 className="text-3xl font-bold mb-4">Latest Offers & Events</h2>
         <p className="text-gray-700 mb-6">Check out our newest promotions and updates</p>
         <div className="flex justify-center gap-4 px-4 flex-wrap">
+          <img src="/vibes.png" alt="Offer 1" className="w-64 rounded shadow" />
           <img src="/juice.jpg" alt="Offer 1" className="w-64 rounded shadow" />
           <img src="/vegie.png" alt="Offer 2" className="w-64 rounded shadow" />
           <img src="/delivery.jpg" alt="Offer 1" className="w-64 rounded shadow" />
