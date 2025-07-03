@@ -10,13 +10,19 @@ export default function LoginPage() {
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const res = await axios.post('/api/users/login', { phoneNumber, password });
-      localStorage.setItem('tajiUser', JSON.stringify(res.data));
-      alert('Login successful! You can now proceed with your order.');
+      const res = await axios.post('http://localhost:5001/api/users/login', {
+        phoneNumber,
+        password,
+      });
+
+      const { token, ...userData } = res.data;
+      localStorage.setItem('tajiUserToken', token);
+      localStorage.setItem('tajiUser', JSON.stringify(userData));
+
+      alert('Login successful!');
       navigate('/');
     } catch (err) {
-      alert('Invalid credentials. Please try again or sign up.');
-      navigate('/signup');
+      alert('Invalid credentials. Please try again.');
     }
   };
 
@@ -47,7 +53,10 @@ export default function LoginPage() {
           Login
         </button>
         <p className="text-sm mt-4 text-center">
-          Don’t have an account? <a href="/signup" className="text-red-600 underline">Sign Up</a>
+          Don’t have an account?{' '}
+          <a href="/signup" className="text-red-600 underline">
+            Sign Up
+          </a>
         </p>
       </form>
     </div>

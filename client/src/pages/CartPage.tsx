@@ -4,9 +4,9 @@ import {
   incrementQty,
   decrementQty,
   clearCart,
+  removeFromCart,
 } from '../store/cartSlice';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
 
 export default function CartPage() {
   const cart = useSelector((state: RootState) => state.cart.items);
@@ -15,32 +15,9 @@ export default function CartPage() {
 
   const total = cart.reduce((sum, item) => sum + item.price * item.qty, 0);
 
-  const handleCheckout = async () => {
-    const token = localStorage.getItem('tajiUserToken');
-    if (!token) {
-      alert('Please login to proceed to checkout');
-      return navigate('/login');
-    }
-
-    try {
-      await axios.post(
-        '/api/orders',
-        {
-          orderItems: cart,
-          totalPrice: total
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`
-          }
-        }
-      );
-      alert('Order placed successfully!');
-      dispatch(clearCart());
-    } catch (err: any) {
-      console.error('Checkout error:', err.response || err.message || err);
-      alert('Order failed. Please try again.');
-    }
+  // ✅ No login/token check — just navigate to /checkout
+  const handleProceedToCheckout = () => {
+    navigate('/checkout');
   };
 
   return (
@@ -67,6 +44,7 @@ export default function CartPage() {
                   <p className="text-sm">Ksh {item.price}</p>
                 </div>
               </div>
+
               <div className="flex items-center gap-2">
                 <button
                   onClick={() => dispatch(decrementQty(item._id))}
@@ -82,7 +60,16 @@ export default function CartPage() {
                   +
                 </button>
               </div>
-              <p className="font-semibold">Ksh {item.qty * item.price}</p>
+
+              <div className="flex items-center gap-4">
+                <p className="font-semibold">Ksh {item.qty * item.price}</p>
+                <button
+                  onClick={() => dispatch(removeFromCart(item._id))}
+                  className="text-red-700 hover:underline text-sm"
+                >
+                  Remove
+                </button>
+              </div>
             </div>
           ))}
 
@@ -91,7 +78,7 @@ export default function CartPage() {
           </div>
 
           <button
-            onClick={handleCheckout}
+            onClick={handleProceedToCheckout}
             className="mt-4 bg-red-800 text-white px-6 py-2 rounded hover:bg-red-700 transition"
           >
             Proceed to Checkout

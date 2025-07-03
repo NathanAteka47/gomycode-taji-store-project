@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import axios from 'axios';
 import AddProductForm from '../components/AddProductForm'; // adjust path if needed
 import AddWorkerForm from '../components/AddWorkerForm';
+import WorkerList from '../components/WorkerList';
 
 interface Product {
   _id: string;
@@ -30,8 +31,8 @@ export default function AdminDashboard() {
     const fetchData = async () => {
       try {
         const [productRes, workerRes] = await Promise.all([
-          axios.get('/api/products'),
-          axios.get('/api/workers'),
+          axios.get('http://localhost:5001/api/products'),
+          axios.get('http://localhost:5001/api/workers'),
         ]);
 
         if (Array.isArray(productRes.data)) setProducts(productRes.data);
@@ -48,7 +49,7 @@ export default function AdminDashboard() {
 
   const removeProduct = async (id: string) => {
     try {
-      await axios.delete(`/api/products/${id}`);
+      await axios.delete(`http://localhost:5001/api/products/${id}`);
       setProducts(prev => prev.filter(p => p._id !== id));
     } catch (error) {
       console.error('Failed to remove product:', error);
@@ -57,7 +58,7 @@ export default function AdminDashboard() {
 
   const removeWorker = async (id: string) => {
     try {
-      await axios.delete(`/api/workers/${id}`);
+      await axios.delete(`http://localhost:5001/api/workers/${id}`);
       setWorkers(prev => prev.filter(w => w._id !== id));
     } catch (error) {
       console.error('Failed to remove worker:', error);
@@ -125,6 +126,7 @@ export default function AdminDashboard() {
               ))}
             </div>
           </section>
+          <WorkerList />
         </>
       )}
     </div>

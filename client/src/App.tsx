@@ -9,6 +9,10 @@ import AdminDashboard from './pages/AdminDashboard';
 import PosPage from './pages/Pospage';
 import Navbar from './components/Navbar';
 import CartPage from './pages/CartPage';
+import UserProfile from './pages/UserProfile';
+import CheckoutPage from './pages/CheckoutPage';
+import Footer from './components/Footer';
+
 function App() {
   return (
     <Router>
@@ -22,7 +26,10 @@ function App() {
         <Route path="/admin/dashboard" element={<AdminDashboard />} />
         <Route path="/pos" element={<PosPage />} />
         <Route path="/cart" element={<CartPage />} />
+        <Route path="/profile" element={<UserProfile />} /> {/* ✅ New route */}
+        <Route path="/checkout" element={<CheckoutPage />} />
       </Routes>
+      <Footer />
     </Router>
   );
 }

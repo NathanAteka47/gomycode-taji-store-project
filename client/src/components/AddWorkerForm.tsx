@@ -16,7 +16,7 @@ export default function AddWorkerForm() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await axios.post('/api/workers', form);
+      await axios.post('http://localhost:5001/api/workers', form);
       alert('Worker added successfully');
     } catch (err) {
       alert('Error adding worker');

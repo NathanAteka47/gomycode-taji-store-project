@@ -17,7 +17,7 @@ export default function AddProductForm() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await axios.post('/api/products', {
+      await axios.post('http://localhost:5001/api/products', {
         ...form,
         price: parseFloat(form.price)
       });

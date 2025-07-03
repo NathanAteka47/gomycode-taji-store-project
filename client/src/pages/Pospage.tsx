@@ -27,7 +27,7 @@ export default function PosPage() {
 
   // ✅ Fetch products
   useEffect(() => {
-    axios.get('/api/products')
+    axios.get('http://localhost:5001/api/products')
       .then(res => {
         if (Array.isArray(res.data)) {
           setProducts(res.data);
@@ -66,7 +66,7 @@ export default function PosPage() {
     }
     try {
       setMessage('Initiating M-Pesa Payment...');
-      const res = await axios.post('/api/mpesa/stkpush', { phone, amount: total });
+      const res = await axios.post('http://localhost:5001/api/mpesa/stkpush', { phone, amount: total });
 
       if (res.data.ResponseCode === '0') {
         setMessage('✅ M-Pesa STK Push Sent. Check your phone to complete payment.');
@@ -87,7 +87,7 @@ export default function PosPage() {
     }
 
     try {
-      await axios.post('/api/sales', {
+      await axios.post('http://localhost:5001/api/sales', {
         worker: workerId,
         saleItems,
         totalAmount: total
