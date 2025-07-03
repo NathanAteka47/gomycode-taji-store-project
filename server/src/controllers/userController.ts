@@ -1,7 +1,7 @@
 import { RequestHandler, type Request,type Response } from 'express';
-import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import User from '../models/userModel';
+import { pwdConfirm, pwdHasher } from '../utils/bcrypt';
 
 // 🔐 Utility to generate JWT token
 const generateToken = (id: string): string => {
@@ -12,7 +12,7 @@ const generateToken = (id: string): string => {
 // ✅ @route   POST /api/users/register
 export const registerUser:RequestHandler<any> = async (req, res) => {
   const { name, phoneNumber, password } = req.body;
-  const hashedPassword=bcrypt.hashSync(password)
+  const hashedPassword=pwdHasher(password)
   try {
     const existingUser = await User.findOne({ phoneNumber });
     if (existingUser) {
@@ -49,7 +49,9 @@ export const loginUser:RequestHandler = async (req, res) => {
       return res.status(400).json({ message: 'User not found' });
     }
 
-    const isMatch = await bcrypt.compare(password, user.password);
+    const isMatch = pwdConfirm(password, user.password);
+    // const isMatch = password.trim()===user.password
+    console.log({password,dbPassword:user.password})
     if (!isMatch) {
       return res.status(401).json({ message: 'Invalid password' });
     }
