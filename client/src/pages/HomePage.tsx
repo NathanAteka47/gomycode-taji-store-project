@@ -1,9 +1,20 @@
 import { Link } from 'react-router-dom';
+import { motion } from 'framer-motion';
 
+<motion.div
+  initial={{ opacity: 0, y: 40 }}
+  animate={{ opacity: 1, y: 0 }}
+  transition={{ duration: 0.6 }}
+></motion.div>
 export default function HomePage() {
   return (
     <div className="bg-white text-[#8B0000] min-h-screen">
       {/* Hero Section */}
+      <motion.div
+  initial={{ opacity: 0, y: 40 }}
+  animate={{ opacity: 1, y: 0 }}
+  transition={{ duration: 0.6 }}
+>
       <header className="animate-fadeIn py-16 text-center bg-[#8B0000] text-white">
         <h1 className="animate-fadeIn text-5xl font-extrabold mb-4">Welcome to Taji Three In One Online Store</h1>
         <p className="animate-fadeIn text-lg">Order delicious food, refreshing water, and tasty cakes online</p>
@@ -13,7 +24,12 @@ export default function HomePage() {
           </button>
         </Link>
       </header>
-
+</motion.div>
+<motion.div
+  initial={{ opacity: 0, y: 40 }}
+  animate={{ opacity: 1, y: 0 }}
+  transition={{ duration: 0.6 }}
+>
       {/* Blog / Offers Section */}
       <section id="blogs" className="py-16 bg-gray-100 text-center">
         <h2 className="text-3xl font-bold mb-4">Latest Offers & Events</h2>
@@ -34,7 +50,12 @@ export default function HomePage() {
           <a href="#" className="text-blue-400 hover:underline">Twitter</a>
         </div>
       </section>
-
+</motion.div>
+<motion.div
+  initial={{ opacity: 0, y: 40 }}
+  animate={{ opacity: 1, y: 0 }}
+  transition={{ duration: 0.6 }}
+>
       {/* Reservation Section */}
       <section id="reservations" className="py-16 px-4">
         <h2 className="text-3xl font-semibold text-center mb-8">Reservation & Reviews</h2>
@@ -68,6 +89,7 @@ export default function HomePage() {
           </button>
         </form>
       </section>
+      </motion.div>
     </div>
   );
 }

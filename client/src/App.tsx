@@ -6,12 +6,13 @@ import LoginPage from './pages/LoginPage';
 import SignupPage from './pages/SignupPage';
 import AdminLoginPage from './pages/AdminLoginPage';
 import AdminDashboard from './pages/AdminDashboard';
-import PosPage from './pages/Pospage';
 import Navbar from './components/Navbar';
 import CartPage from './pages/CartPage';
 import UserProfile from './pages/UserProfile';
 import CheckoutPage from './pages/CheckoutPage';
 import Footer from './components/Footer';
+import PaymentDetailsPage from './pages/PaymentDetailsPage';
+
 
 function App() {
   return (
@@ -24,10 +25,10 @@ function App() {
         <Route path="/signup" element={<SignupPage />} />
         <Route path="/admin/login" element={<AdminLoginPage />} />
         <Route path="/admin/dashboard" element={<AdminDashboard />} />
-        <Route path="/pos" element={<PosPage />} />
         <Route path="/cart" element={<CartPage />} />
         <Route path="/profile" element={<UserProfile />} /> {/* ✅ New route */}
         <Route path="/checkout" element={<CheckoutPage />} />
+        <Route path="/payment-details" element={<PaymentDetailsPage />} />
       </Routes>
       <Footer />
     </Router>

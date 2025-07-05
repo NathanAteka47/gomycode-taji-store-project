@@ -42,7 +42,6 @@ export default function Navbar() {
           <li><Link to="/" className="hover:underline">Home</Link></li>
           <li><Link to="/products" className="hover:underline">Our Products</Link></li>
           <li><Link to="/admin/login" className="hover:underline">Admin Login</Link></li>
-          <li><Link to="/pos" className="hover:underline">POS</Link></li>
 
           {isLoggedIn ? (
             <>

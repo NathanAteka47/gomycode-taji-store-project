@@ -3,6 +3,7 @@ import axios from 'axios';
 import AddProductForm from '../components/AddProductForm'; // adjust path if needed
 import AddWorkerForm from '../components/AddWorkerForm';
 import WorkerList from '../components/WorkerList';
+import PosPage from '../components/Pospage';
 
 interface Product {
   _id: string;
@@ -73,6 +74,7 @@ export default function AdminDashboard() {
         <p className="text-center text-lg">Loading data...</p>
       ) : (
         <>
+        <PosPage />
           {/* Products Section */}
           <AddProductForm />
           <section className="mb-12">
