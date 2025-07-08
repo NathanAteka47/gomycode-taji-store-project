@@ -1,8 +1,5 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import axios from 'axios';
-import html2pdf from 'html2pdf.js';
-import QRCode from 'qrcode';
-import Receipt from '../components/Receipt';
 import { motion } from 'framer-motion';
 
 interface Product {
@@ -26,9 +23,6 @@ export default function PosPage() {
   const [filter, setFilter] = useState('all');
   const [search, setSearch] = useState('');
   const [message, setMessage] = useState('');
-  const [transactionId, setTransactionId] = useState('');
-  const [qrDataUrl, setQrDataUrl] = useState('');
-  const receiptRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     axios.get('http://localhost:5001/api/products')
@@ -51,35 +45,8 @@ export default function PosPage() {
 
   const total = saleItems.reduce((sum, item) => sum + item.price * item.qty, 0);
 
-  const generateTransactionId = () => {
-    const now = new Date();
-    return `TJI-${now.toISOString().slice(0, 10).replace(/-/g, '')}-${Math.floor(1000 + Math.random() * 9000)}`;
-  };
-
   const handleSubmit = async () => {
     if (saleItems.length === 0) return alert('No items to sell');
-
-    const txnId = generateTransactionId();
-    setTransactionId(txnId);
-
-    const qrText = `Receipt: ${txnId}\nAmount: Ksh ${total}\nDate: ${new Date().toLocaleString()}`;
-    const qr = await QRCode.toDataURL(qrText);
-    setQrDataUrl(qr);
-
-    await new Promise(resolve => setTimeout(resolve, 100));
-    const receiptElement = receiptRef.current;
-    if (!receiptElement) return;
-
-    const pdfBlob = await html2pdf()
-      .set({ html2canvas: { scale: 2 }, jsPDF: { format: 'a4' } })
-      .from(receiptElement)
-      .outputPdf('blob');
-
-    const pdfFile = new File([pdfBlob], 'receipt.pdf', { type: 'application/pdf' });
-    const formData = new FormData();
-    formData.append('file', pdfFile);
-    formData.append('phone', '254718601536');
-    formData.append('caption', `Taji Eats POS Receipt: ${txnId}`);
 
     try {
       await axios.post('http://localhost:5001/api/sales', {
@@ -87,14 +54,10 @@ export default function PosPage() {
         saleItems,
         totalAmount: total,
       });
-
-      await axios.post('http://localhost:5001/api/whatsapp/send', formData);
-
-      setMessage('✅ Sale complete. Receipt sent to WhatsApp.');
+      setMessage('✅ Sale complete.');
       setSaleItems([]);
-    } catch (err) {
-      console.error('❌ Failed:', err);
-      alert('❌ Sale failed or WhatsApp send failed.');
+    } catch {
+      alert('❌ Sale failed.');
     }
   };
 
@@ -106,7 +69,7 @@ export default function PosPage() {
         phone: '254718601536',
         message: msg,
       });
-    } catch (err) {
+    } catch {
       alert('❌ Failed to send daily report');
     }
   };
@@ -182,7 +145,7 @@ export default function PosPage() {
           onClick={handleSubmit}
           className="w-full bg-red-800 text-white py-2 rounded hover:bg-red-700 transition my-2"
         >
-          💵 Complete Sale & Send Receipt
+          💵 Complete Sale
         </button>
 
         <button
@@ -193,15 +156,6 @@ export default function PosPage() {
         </button>
 
         {message && <p className="mt-4 text-center text-green-700 font-semibold">{message}</p>}
-      </div>
-
-      <div className="hidden print:block bg-white p-4 mt-8 text-sm" ref={receiptRef}>
-        <Receipt
-          saleItems={saleItems}
-          total={total}
-          date={new Date().toLocaleString()}
-          saleId={transactionId}
-        />
       </div>
     </motion.div>
   );

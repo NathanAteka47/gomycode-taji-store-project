@@ -3,7 +3,6 @@ import { RootState } from '../store';
 import {
   incrementQty,
   decrementQty,
-  clearCart,
   removeFromCart,
 } from '../store/cartSlice';
 import { useNavigate } from 'react-router-dom';

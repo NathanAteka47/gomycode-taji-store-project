@@ -1,14 +1,11 @@
 import { useState, useEffect } from 'react'; 
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { RootState } from '../store';
-import { clearCart } from '../store/cartSlice';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
 import { motion } from 'framer-motion';
 
 export default function CheckoutPage() {
   const cart = useSelector((state: RootState) => state.cart.items);
-  const dispatch = useDispatch();
   const navigate = useNavigate();
   const [form, setForm] = useState({
     fullName: '',

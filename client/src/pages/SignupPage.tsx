@@ -43,8 +43,8 @@ export default function SignupPage() {
 
       alert('🎉 Account created and logged in!');
       navigate('/'); // ✅ Redirect directly to home/dashboard
-    } catch (err: any) {
-      const message = err.response?.data?.message || 'Signup failed.';
+    } catch (err: unknown) {
+      const message = (err as Error).message || 'Signup failed.';
       alert(message);
     }
   };

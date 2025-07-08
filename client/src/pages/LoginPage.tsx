@@ -25,8 +25,8 @@ export default function LoginPage() {
       alert("Login successful!");
       navigate("/");
       window.location.reload(); // Refresh the page after navigating home
-    } catch (err: any) {
-      console.error("Login error:", err.response?.data || err.message);
+    } catch (err: unknown) {
+      console.error("Login error:", (err as Error).message);
       alert("❌ Invalid credentials. Please try again.");
     }
   };

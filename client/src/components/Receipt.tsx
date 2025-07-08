@@ -3,12 +3,10 @@ import React, { forwardRef } from 'react';
 interface ReceiptProps {
   saleItems: { name: string; qty: number; price: number }[];
   total: number;
-  phone?: string;
-  saleId?: string;
   date: string;
 }
 
-const Receipt = forwardRef<HTMLDivElement, ReceiptProps>(({ saleItems, total, phone, saleId, date }, ref) => {
+const Receipt = forwardRef<HTMLDivElement, ReceiptProps>(({ saleItems, total, date }, ref) => {
   const itemCount = saleItems.reduce((sum, item) => sum + item.qty, 0);
   const tax = +(total * 0.1652).toFixed(2);
 

@@ -3,7 +3,7 @@ import axios from 'axios';
 import AddProductForm from '../components/AddProductForm';
 import AddWorkerForm from '../components/AddWorkerForm';
 import WorkerList from '../components/WorkerList';
-import PosPage from '../components/Pospage';
+// import PosPage from '../components/Pospage';
 import { motion } from 'framer-motion';
 
 interface Product {
@@ -80,7 +80,7 @@ export default function AdminDashboard() {
         <p className="text-center text-lg">Loading dashboard data...</p>
       ) : (
         <>
-          <PosPage />
+          {/* <PosPage /> */}
 
           {/* ➕ Product Form */}
           <AddProductForm />

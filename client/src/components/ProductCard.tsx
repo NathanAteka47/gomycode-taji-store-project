@@ -5,9 +5,7 @@ import { addToCart } from '../store/cartSlice';
 import { motion } from 'framer-motion';
 import { FaStar } from 'react-icons/fa';
 
-interface ProductProps extends IProduct {}
-
-export default function ProductCard(product: ProductProps) {
+export default function ProductCard(product: IProduct) {
   const dispatch = useDispatch();
   const [added, setAdded] = useState(false);
 

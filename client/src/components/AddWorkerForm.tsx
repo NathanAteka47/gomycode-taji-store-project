@@ -18,7 +18,7 @@ export default function AddWorkerForm() {
     try {
       await axios.post('http://localhost:5001/api/workers', form);
       alert('Worker added successfully');
-    } catch (err) {
+    } catch {
       alert('Error adding worker');
     }
   };

@@ -63,7 +63,7 @@ export default function UserProfile() {
       setMessage('✅ Password updated successfully');
       setNewPassword('');
       setConfirmPassword('');
-    } catch (err: any) {
+    } catch {
       setMessage('❌ Error updating password');
     }
   };
@@ -83,7 +83,7 @@ export default function UserProfile() {
       setUser(res.data);
       setEditMode(false);
       setMessage('✅ Profile updated successfully');
-    } catch (err: any) {
+    } catch {
       setMessage('❌ Error updating profile');
     }
   };

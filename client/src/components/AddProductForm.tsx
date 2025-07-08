@@ -22,7 +22,7 @@ export default function AddProductForm() {
         price: parseFloat(form.price)
       });
       alert('Product added successfully');
-    } catch (err) {
+    } catch {
       alert('Error adding product');
     }
   };
