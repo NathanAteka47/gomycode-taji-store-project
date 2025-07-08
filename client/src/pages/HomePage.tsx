@@ -9,86 +9,124 @@ import { motion } from 'framer-motion';
 export default function HomePage() {
   return (
     <div className="bg-white text-[#8B0000] min-h-screen">
-      {/* Hero Section */}
       <motion.div
   initial={{ opacity: 0, y: 40 }}
   animate={{ opacity: 1, y: 0 }}
   transition={{ duration: 0.6 }}
 >
-      <header className="animate-fadeIn py-16 text-center bg-[#8B0000] text-white">
-        <h1 className="animate-fadeIn text-5xl font-extrabold mb-4">Welcome to Taji Three In One Online Store</h1>
-        <p className="animate-fadeIn text-lg">Order delicious food, refreshing water, and tasty cakes online</p>
-        <Link to="/products">
-          <button className="mt-6 px-6 py-3 bg-white text-[#8B0000] font-semibold rounded hover:bg-gray-200 transition">
-            View Our Products
-          </button>
-        </Link>
-      </header>
+{/* Hero Section */}
+<header className="relative bg-[#8B0000] text-white py-28 overflow-hidden">
+  {/* Background Glow Animation */}
+  <div className="absolute -top-32 -left-32 w-96 h-96 bg-red-400 rounded-full blur-3xl opacity-30 animate-pulse"></div>
+  <div className="absolute -bottom-32 -right-32 w-96 h-96 bg-yellow-500 rounded-full blur-3xl opacity-20 animate-ping"></div>
+
+  {/* Content */}
+  <div className="relative z-10 text-center max-w-3xl mx-auto px-4 animate-fadeInDown">
+    <h1 className="text-4xl md:text-4xl font-extrabold mb-4 leading-tight tracking-tight drop-shadow-md">
+      Welcome to <span className="text-blue-300">Taji</span> Three In One Store
+    </h1>
+    <p className="text-xl md:text-2xl text-gray-100 font-light mb-8">
+      Order delicious meals, cakes, and clean bottled water from anywhere — fast, fresh, and reliable.
+    </p>
+    <Link to="/products">
+      <button className="px-8 py-3 text-lg bg-blue-400 hover:bg-yellow-500 text-red-900 font-semibold rounded-xl shadow-md transition transform hover:scale-105 duration-300">
+        🍽️ View Our Products
+      </button>
+    </Link>
+  </div>
+</header>
+
 </motion.div>
 <motion.div
   initial={{ opacity: 0, y: 40 }}
   animate={{ opacity: 1, y: 0 }}
   transition={{ duration: 0.6 }}
 >
-      {/* Blog / Offers Section */}
-      <section id="blogs" className="py-16 bg-gray-100 text-center">
-        <h2 className="text-3xl font-bold mb-4">Latest Offers & Events</h2>
-        <p className="text-gray-700 mb-6">Check out our newest promotions and updates</p>
-        <div className="flex justify-center gap-4 px-4 flex-wrap">
-          <img src="/grand-opening.jpg" alt="Offer 1" className="w-64 rounded shadow" />
-          <img src="/july.png" alt="Offer 1" className="w-64 rounded shadow" />
-          <img src="/Fishy-goodness.png" alt="Offer 1" className="w-64 rounded shadow" />
-          <img src="/vibes.png" alt="Offer 1" className="w-64 rounded shadow" />
-          <img src="/juice.jpg" alt="Offer 1" className="w-64 rounded shadow" />
-          <img src="/vegie.png" alt="Offer 2" className="w-64 rounded shadow" />
-          <img src="/delivery.jpg" alt="Offer 1" className="w-64 rounded shadow" />
-          <img src="/call.jpg" alt="Offer 2" className="w-64 rounded shadow" />
+{/* Blog / Offers Section */}
+<section id="blogs" className="py-20 bg-gradient-to-b from-red-50 to-white">
+  <div className="text-center max-w-4xl mx-auto mb-12">
+    <h2 className="text-4xl font-bold text-red-900 mb-2 tracking-tight animate-fadeIn">🔥 Latest Offers & Events</h2>
+    <p className="text-gray-600 text-lg animate-fadeIn delay-100">Fresh deals, tasty vibes, and unforgettable moments</p>
+  </div>
+
+  <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 px-6 animate-fadeInUp">
+    {[
+      { src: '/grand-opening.jpg', alt: 'Grand Opening' },
+      { src: '/july.png', alt: 'July Promo' },
+      { src: '/Fishy-goodness.png', alt: 'Fishy Goodness' },
+      { src: '/vibes.png', alt: 'Vibes Only' },
+      { src: '/juice.jpg', alt: 'Fresh Juices' },
+      { src: '/vegie.png', alt: 'Vegie Days' },
+      { src: '/delivery.jpg', alt: 'Fast Delivery' },
+      { src: '/call.jpg', alt: 'Call to Order' },
+    ].map((img, i) => (
+      <div key={i} className="relative group overflow-hidden rounded-xl shadow-lg hover:scale-105 transition transform duration-500">
+        <img src={img.src} alt={img.alt} className="w-full h-48 object-cover" />
+        <div className="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition duration-300">
+          <p className="text-white text-lg font-semibold">{img.alt}</p>
         </div>
-        <div className="mt-6 space-x-4">
-          <a href="#" className="text-blue-600 hover:underline">Facebook</a>
-          <a href="#" className="text-pink-600 hover:underline">Instagram</a>
-          <a href="#" className="text-blue-400 hover:underline">Twitter</a>
-        </div>
-      </section>
+      </div>
+    ))}
+  </div>
+</section>
+
 </motion.div>
 <motion.div
   initial={{ opacity: 0, y: 40 }}
   animate={{ opacity: 1, y: 0 }}
   transition={{ duration: 0.6 }}
 >
-      {/* Reservation Section */}
-      <section id="reservations" className="py-16 px-4">
-        <h2 className="text-3xl font-semibold text-center mb-8">Reservation & Reviews</h2>
-        <form className="max-w-md mx-auto bg-white p-6 rounded shadow-lg border border-red-100">
-          <input
-            type="text"
-            placeholder="Name"
-            className="w-full mb-4 p-2 border border-red-300 rounded"
-          />
-          <input
-            type="email"
-            placeholder="Email"
-            className="w-full mb-4 p-2 border border-red-300 rounded"
-          />
-          <textarea
-            placeholder="Review"
-            className="w-full mb-4 p-2 border border-red-300 rounded"
-          />
-          <div className="mb-4">
-            <label className="block mb-1 text-sm font-medium">Rating:</label>
-            <select className="w-full p-2 border border-red-300 rounded">
-              <option>1 Star</option>
-              <option>2 Stars</option>
-              <option>3 Stars</option>
-              <option>4 Stars</option>
-              <option>5 Stars</option>
-            </select>
-          </div>
-          <button className="w-full bg-[#8B0000] text-white py-2 rounded hover:bg-red-700 transition">
-            Submit
-          </button>
-        </form>
-      </section>
+      {/* Reservation & Reviews Section */}
+<section id="reservations" className="py-20 px-4 bg-gradient-to-b from-red-50 to-white">
+  <div className="max-w-5xl mx-auto text-center mb-12">
+    <h2 className="text-4xl font-extrabold text-red-900 mb-2 tracking-tight">Book a Table & Share Your Experience</h2>
+    <p className="text-gray-600 text-lg">Reserve in seconds and let others know how Taji made your day!</p>
+  </div>
+
+  <div className="grid md:grid-cols-2 gap-10 max-w-6xl mx-auto">
+    {/* Reservation Form */}
+    <form className="bg-white p-8 rounded-2xl shadow-xl border border-red-200 animate-fadeIn">
+      <h3 className="text-xl font-bold text-red-800 mb-4">Make a Reservation</h3>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <input type="text" placeholder="Full Name" className="p-3 border border-gray-300 rounded-lg" />
+        <input type="email" placeholder="Email Address" className="p-3 border border-gray-300 rounded-lg" />
+        <input type="tel" placeholder="Phone Number" className="p-3 border border-gray-300 rounded-lg" />
+        <input type="date" className="p-3 border border-gray-300 rounded-lg" />
+      </div>
+      <textarea
+        placeholder="Special requests or messages..."
+        className="w-full mt-4 p-3 border border-gray-300 rounded-lg"
+        rows={3}
+      />
+      <button className="w-full mt-6 bg-red-800 text-white py-3 rounded-lg hover:bg-red-700 transition">
+        Reserve Now
+      </button>
+    </form>
+
+    {/* Review Form */}
+    <form className="bg-white p-8 rounded-2xl shadow-xl border border-red-200 animate-fadeIn delay-100">
+      <h3 className="text-xl font-bold text-red-800 mb-4">Leave a Review</h3>
+      <input type="text" placeholder="Your Name" className="w-full mb-4 p-3 border border-gray-300 rounded-lg" />
+      <textarea
+        placeholder="Your feedback..."
+        className="w-full mb-4 p-3 border border-gray-300 rounded-lg"
+        rows={4}
+      />
+      <div className="mb-4">
+        <label className="block text-sm font-semibold mb-2">Rating</label>
+        <div className="flex items-center gap-2">
+          {[1, 2, 3, 4, 5].map((star) => (
+            <span key={star} className="text-yellow-400 text-xl hover:scale-125 transition transform cursor-pointer">⭐</span>
+          ))}
+        </div>
+      </div>
+      <button className="w-full bg-green-700 text-white py-3 rounded-lg hover:bg-green-600 transition">
+        Submit Review
+      </button>
+    </form>
+  </div>
+</section>
+
       </motion.div>
     </div>
   );

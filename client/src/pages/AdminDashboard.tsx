@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
-import AddProductForm from '../components/AddProductForm'; // adjust path if needed
+import AddProductForm from '../components/AddProductForm';
 import AddWorkerForm from '../components/AddWorkerForm';
 import WorkerList from '../components/WorkerList';
 import PosPage from '../components/Pospage';
+import { motion } from 'framer-motion';
 
 interface Product {
   _id: string;
@@ -27,7 +28,6 @@ export default function AdminDashboard() {
   const [workers, setWorkers] = useState<Worker[]>([]);
   const [loading, setLoading] = useState(true);
 
-  // ✅ Fetch products and workers
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -35,7 +35,6 @@ export default function AdminDashboard() {
           axios.get('http://localhost:5001/api/products'),
           axios.get('http://localhost:5001/api/workers'),
         ]);
-
         if (Array.isArray(productRes.data)) setProducts(productRes.data);
         if (Array.isArray(workerRes.data)) setWorkers(workerRes.data);
       } catch (error) {
@@ -67,67 +66,91 @@ export default function AdminDashboard() {
   };
 
   return (
-    <div className="min-h-screen p-6 bg-white text-red-800">
-      <h1 className="text-3xl font-bold mb-8 text-center">Admin Dashboard</h1>
+    <div className="min-h-screen p-6 bg-gradient-to-br from-red-50 to-white text-red-900">
+      <motion.h1
+        className="text-4xl font-bold mb-10 text-center"
+        initial={{ opacity: 0, y: -30 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+      >
+        🛠️ Admin Dashboard
+      </motion.h1>
 
       {loading ? (
-        <p className="text-center text-lg">Loading data...</p>
+        <p className="text-center text-lg">Loading dashboard data...</p>
       ) : (
         <>
-        <PosPage />
-          {/* Products Section */}
+          <PosPage />
+
+          {/* ➕ Product Form */}
           <AddProductForm />
-          <section className="mb-12">
-            <h2 className="text-2xl font-semibold mb-4">Products</h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+
+          {/* 📦 Product Cards */}
+          <section className="my-10">
+            <h2 className="text-2xl font-semibold mb-6">Product Inventory</h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {products.map(product => (
-                <div key={product._id} className="border p-4 rounded shadow text-center">
+                <motion.div
+                  key={product._id}
+                  className="border p-4 rounded-lg shadow-md bg-white hover:shadow-xl transition duration-300"
+                  whileHover={{ scale: 1.02 }}
+                >
                   <img
                     src={product.image}
                     alt={product.name}
                     onError={(e) => ((e.target as HTMLImageElement).src = '/default-image.jpg')}
-                    className="w-full h-40 object-cover rounded mb-3"
+                    className="w-full h-40 object-cover rounded mb-4"
                   />
-                  <h3 className="font-bold text-lg mb-1">{product.name}</h3>
-                  <p className="text-sm mb-1">{product.description}</p>
-                  <p className="text-sm font-semibold mb-2">Ksh {product.price.toLocaleString()}</p>
+                  <h3 className="font-bold text-lg">{product.name}</h3>
+                  <p className="text-sm text-gray-700 mb-1">{product.description}</p>
+                  <p className="text-red-800 font-semibold mb-3">Ksh {product.price.toLocaleString()}</p>
                   <button
                     onClick={() => removeProduct(product._id)}
-                    className="bg-red-700 text-white px-3 py-1 rounded hover:bg-red-800 transition"
+                    className="bg-red-700 text-white px-4 py-1 rounded hover:bg-red-800 transition"
                   >
                     Remove
                   </button>
-                </div>
+                </motion.div>
               ))}
             </div>
           </section>
 
-          {/* Workers Section */}
+          {/* ➕ Worker Form */}
           <AddWorkerForm />
-          <section>
-            <h2 className="text-2xl font-semibold mb-4">Workers</h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+
+          {/* 👨‍🍳 Worker Cards */}
+          <section className="my-10">
+            <h2 className="text-2xl font-semibold mb-6">Workers Management</h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {workers.map(worker => (
-                <div key={worker._id} className="border p-4 rounded shadow text-center">
+                <motion.div
+                  key={worker._id}
+                  className="border p-4 rounded-lg shadow-md bg-white hover:shadow-xl transition duration-300"
+                  whileHover={{ scale: 1.02 }}
+                >
                   <img
                     src={worker.picture}
                     alt={worker.name}
                     onError={(e) => ((e.target as HTMLImageElement).src = '/default-avatar.png')}
-                    className="w-24 h-24 rounded-full mx-auto mb-2 object-cover"
+                    className="w-24 h-24 rounded-full mx-auto mb-3 object-cover"
                   />
-                  <h3 className="font-bold text-lg">{worker.name}</h3>
-                  <p className="text-sm">ID: {worker.workerId}</p>
-                  <p className="text-sm mb-2">{worker.jobTitle}</p>
-                  <button
-                    onClick={() => removeWorker(worker._id)}
-                    className="bg-red-700 text-white px-3 py-1 rounded hover:bg-red-800 transition"
-                  >
-                    Remove
-                  </button>
-                </div>
+                  <h3 className="font-bold text-lg text-center">{worker.name}</h3>
+                  <p className="text-sm text-center">ID: {worker.workerId}</p>
+                  <p className="text-sm text-center text-gray-600 mb-2">{worker.jobTitle}</p>
+                  <div className="flex justify-center">
+                    <button
+                      onClick={() => removeWorker(worker._id)}
+                      className="bg-red-700 text-white px-4 py-1 rounded hover:bg-red-800 transition"
+                    >
+                      Remove
+                    </button>
+                  </div>
+                </motion.div>
               ))}
             </div>
           </section>
+
+          {/* 👥 Worker List (Optional Section) */}
           <WorkerList />
         </>
       )}

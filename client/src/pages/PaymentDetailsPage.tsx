@@ -21,7 +21,7 @@ export default function PaymentDetailsPage() {
       .join('\n')}\n\nTotal: Ksh ${total}\n\nM-Pesa Code: ${mpesaCode}`;
 
     const encodedMessage = encodeURIComponent(message);
-    const whatsappURL = `https://wa.me/254718601536?text=${encodedMessage}`;
+    const whatsappURL = `https://wa.me/254713195195?text=${encodedMessage}`;
 
     window.open(whatsappURL, '_blank');
     alert('Order submitted! Please wait for a call within 5 minutes.');
@@ -34,14 +34,16 @@ export default function PaymentDetailsPage() {
         <h1 className="text-3xl font-bold mb-4 text-center">Payment Details</h1>
 
         <div className="bg-red-100 p-4 rounded mb-6 text-center">
-          <p className="text-lg font-semibold">Buy Goods Till Number</p>
-          <p className="text-2xl font-bold text-red-800">4455627</p>
+          <p className="text-lg font-semibold">Pay Bill Number</p>
+          <p className="text-2xl font-bold text-red-800">4954096</p>
+                    <p className="text-lg font-semibold">Account Number</p>
+          <p className="text-2xl font-bold text-red-800">Your Name</p>
           <p className="text-sm text-gray-700">Taji Food Store</p>
         </div>
 
         <input
           type="text"
-          placeholder="Enter M-Pesa Transaction Code"
+          placeholder="Enter M-Pesa Transaction Code(T...)"
           value={mpesaCode}
           onChange={(e) => setMpesaCode(e.target.value)}
           className="w-full mb-4 p-3 border border-red-300 rounded"

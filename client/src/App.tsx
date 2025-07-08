@@ -1,4 +1,4 @@
-
+import SplashScreen from "./components/SplashScreen";
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import HomePage from './pages/HomePage';
 import ProductsPage from './pages/ProductsPage';
@@ -12,9 +12,19 @@ import UserProfile from './pages/UserProfile';
 import CheckoutPage from './pages/CheckoutPage';
 import Footer from './components/Footer';
 import PaymentDetailsPage from './pages/PaymentDetailsPage';
+import { useState, useEffect } from 'react';
+
 
 
 function App() {
+    const [splashDone, setSplashDone] = useState(false);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setSplashDone(true), 3000); // Sync with SplashScreen
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (!splashDone) return <SplashScreen />;
   return (
     <Router>
       <Navbar />

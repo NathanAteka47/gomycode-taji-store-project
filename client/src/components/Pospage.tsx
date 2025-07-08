@@ -1,5 +1,9 @@
 import { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
+import html2pdf from 'html2pdf.js';
+import QRCode from 'qrcode';
+import Receipt from '../components/Receipt';
+import { motion } from 'framer-motion';
 
 interface Product {
   _id: string;
@@ -52,45 +56,69 @@ export default function PosPage() {
     return `TJI-${now.toISOString().slice(0, 10).replace(/-/g, '')}-${Math.floor(1000 + Math.random() * 9000)}`;
   };
 
-  const sendToWhatsApp = (message: string) => {
-    const encodedMessage = encodeURIComponent(message);
-    const whatsappURL = `https://wa.me/254718601536?text=${encodedMessage}`;
-    window.open(whatsappURL, '_blank');
-  };
-
   const handleSubmit = async () => {
     if (saleItems.length === 0) return alert('No items to sell');
 
     const txnId = generateTransactionId();
     setTransactionId(txnId);
 
-    const summaryText = saleItems.map(i => `- ${i.name} x${i.qty} @ Ksh ${i.price}`).join('\n');
-    const message = `🧾 *New POS Sale*\nTransaction ID: ${txnId}\n${summaryText}\nTotal: Ksh ${total}\nTime: ${new Date().toLocaleString()}`;
-    sendToWhatsApp(message);
+    const qrText = `Receipt: ${txnId}\nAmount: Ksh ${total}\nDate: ${new Date().toLocaleString()}`;
+    const qr = await QRCode.toDataURL(qrText);
+    setQrDataUrl(qr);
 
-    await axios.post('http://localhost:5001/api/sales', {
-      worker: 'worker_id_placeholder', // You can dynamically fill this
-      saleItems,
-      totalAmount: total,
-    });
+    await new Promise(resolve => setTimeout(resolve, 100));
+    const receiptElement = receiptRef.current;
+    if (!receiptElement) return;
 
-    setMessage('✅ Sale complete. Sent to WhatsApp.');
-    setSaleItems([]);
+    const pdfBlob = await html2pdf()
+      .set({ html2canvas: { scale: 2 }, jsPDF: { format: 'a4' } })
+      .from(receiptElement)
+      .outputPdf('blob');
+
+    const pdfFile = new File([pdfBlob], 'receipt.pdf', { type: 'application/pdf' });
+    const formData = new FormData();
+    formData.append('file', pdfFile);
+    formData.append('phone', '254718601536');
+    formData.append('caption', `Taji Eats POS Receipt: ${txnId}`);
+
+    try {
+      await axios.post('http://localhost:5001/api/sales', {
+        worker: 'worker_id_placeholder',
+        saleItems,
+        totalAmount: total,
+      });
+
+      await axios.post('http://localhost:5001/api/whatsapp/send', formData);
+
+      setMessage('✅ Sale complete. Receipt sent to WhatsApp.');
+      setSaleItems([]);
+    } catch (err) {
+      console.error('❌ Failed:', err);
+      alert('❌ Sale failed or WhatsApp send failed.');
+    }
   };
 
   const handleSendDailySales = async () => {
     try {
       const res = await axios.get('http://localhost:5001/api/sales/today');
       const msg = `📊 *Daily Sales Report*\nTotal Orders: ${res.data.count}\nTotal Amount: Ksh ${res.data.total}`;
-      sendToWhatsApp(msg);
+      await axios.post('http://localhost:5001/api/whatsapp/text', {
+        phone: '254718601536',
+        message: msg,
+      });
     } catch (err) {
-      alert('❌ Failed to fetch daily sales');
+      alert('❌ Failed to send daily report');
     }
   };
 
   return (
-    <div className="bg-white text-red-900 min-h-screen p-6">
-      <h1 className="text-3xl font-bold mb-6">Point of Sale (POS)</h1>
+    <motion.div
+      className="bg-white text-red-900 min-h-screen p-6"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.4 }}
+    >
+      <h1 className="text-3xl font-bold mb-6">Taji POS System</h1>
 
       <input
         type="text"
@@ -100,36 +128,37 @@ export default function PosPage() {
         onChange={(e) => setSearch(e.target.value)}
       />
 
-      <div className="mb-6">
+      <div className="mb-6 flex flex-wrap gap-2">
         {['all', 'food', 'cakes', 'water'].map((cat) => (
           <button
             key={cat}
             onClick={() => setFilter(cat)}
-            className={`mr-2 px-4 py-2 rounded ${filter === cat ? 'bg-red-900 text-white' : 'bg-red-100 text-red-900'}`}
+            className={`px-4 py-2 rounded ${filter === cat ? 'bg-red-900 text-white' : 'bg-red-100 text-red-900'} transition`}
           >
-            {cat}
+            {cat.toUpperCase()}
           </button>
         ))}
       </div>
 
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 mb-8">
         {products
           .filter(p => (filter === 'all' || p.category === filter) && p.name.toLowerCase().includes(search.toLowerCase()))
           .map(product => (
             <button
               key={product._id}
               onClick={() => addItem(product)}
-              className="border rounded shadow hover:shadow-md p-2 flex flex-col items-center"
+              className="border rounded shadow hover:shadow-md p-2 flex flex-col items-center bg-white hover:bg-red-50"
             >
-              <img src={product.image} alt={product.name} className="w-24 h-24 object-cover mb-2" />
-              <p>{product.name}</p>
-              <p className="font-bold">Ksh {product.price}</p>
+              <img src={product.image} alt={product.name} className="w-20 h-20 object-cover mb-2 rounded" />
+              <p className="text-sm font-medium">{product.name}</p>
+              <p className="text-xs font-bold">Ksh {product.price}</p>
             </button>
           ))}
       </div>
 
-      <div className="bg-gray-100 p-4 rounded">
-        <h2 className="text-xl font-semibold mb-4">Current Sale</h2>
+      <div className="bg-gray-100 p-4 rounded shadow">
+        <h2 className="text-xl font-semibold mb-4">🧾 Current Sale</h2>
+
         {saleItems.length === 0 ? (
           <p className="text-gray-600">No items added yet</p>
         ) : (
@@ -153,7 +182,7 @@ export default function PosPage() {
           onClick={handleSubmit}
           className="w-full bg-red-800 text-white py-2 rounded hover:bg-red-700 transition my-2"
         >
-          💵 Complete Sale & Send to WhatsApp
+          💵 Complete Sale & Send Receipt
         </button>
 
         <button
@@ -163,8 +192,17 @@ export default function PosPage() {
           📤 Send Daily Sales to Manager
         </button>
 
-        {message && <p className="mt-4 text-center">{message}</p>}
+        {message && <p className="mt-4 text-center text-green-700 font-semibold">{message}</p>}
       </div>
-    </div>
+
+      <div className="hidden print:block bg-white p-4 mt-8 text-sm" ref={receiptRef}>
+        <Receipt
+          saleItems={saleItems}
+          total={total}
+          date={new Date().toLocaleString()}
+          saleId={transactionId}
+        />
+      </div>
+    </motion.div>
   );
 }
