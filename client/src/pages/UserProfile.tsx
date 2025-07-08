@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import axios from 'axios';
+const VITE_API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5001';;
 
 interface User {
   _id: string;
@@ -18,7 +19,7 @@ export default function UserProfile() {
   const [editMode, setEditMode] = useState(false);
   const [editedName, setEditedName] = useState('');
   const [editedPhone, setEditedPhone] = useState('');
-
+  
   useEffect(() => {
     const storedUser = localStorage.getItem('tajiUser');
     if (storedUser) {
@@ -53,7 +54,7 @@ export default function UserProfile() {
     }
     try {
       const token = localStorage.getItem('tajiUserToken');
-      await axios.put(`http://localhost:5001/api/users/${user?._id}/password`, {
+      await axios.put(`${VITE_API_BASE_URL}/api/users/${user?._id}/password`, {
         password: newPassword,
       }, {
         headers: {
@@ -71,7 +72,7 @@ export default function UserProfile() {
   const handleProfileUpdate = async () => {
     try {
       const token = localStorage.getItem('tajiUserToken');
-      const res = await axios.put(`http://localhost:5001/api/users/${user?._id}`, {
+      const res = await axios.put(`${VITE_API_BASE_URL}/api/users/${user?._id}`, {
         name: editedName,
         phoneNumber: editedPhone,
       }, {

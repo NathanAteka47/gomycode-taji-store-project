@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import axios from 'axios';
+const VITE_API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5001';;
 
 export default function AddWorkerForm() {
   const [form, setForm] = useState({
@@ -12,11 +13,11 @@ export default function AddWorkerForm() {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
-
+  
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await axios.post('http://localhost:5001/api/workers', form);
+      await axios.post(`${VITE_API_BASE_URL}/api/workers`, form);
       alert('Worker added successfully');
     } catch {
       alert('Error adding worker');

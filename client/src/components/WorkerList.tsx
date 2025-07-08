@@ -1,6 +1,7 @@
 // client/src/components/WorkerList.tsx
 import { useEffect, useState } from 'react';
 import axios from 'axios';
+const VITE_API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5001';;
 
 interface Worker {
   _id: string;
@@ -12,9 +13,9 @@ interface Worker {
 
 export default function WorkerList() {
   const [workers, setWorkers] = useState<Worker[]>([]);
-
+  
   useEffect(() => {
-    axios.get('http://localhost:5001/api/workers')
+    axios.get(`${VITE_API_BASE_URL}/api/workers`)
       .then(res => setWorkers(res.data))
       .catch(err => {
         console.error('Failed to fetch workers', err);

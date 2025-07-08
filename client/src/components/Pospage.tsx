@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { motion } from 'framer-motion';
+const VITE_API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5001';;
 
 interface Product {
   _id: string;
@@ -23,9 +24,9 @@ export default function PosPage() {
   const [filter, setFilter] = useState('all');
   const [search, setSearch] = useState('');
   const [message, setMessage] = useState('');
-
+  
   useEffect(() => {
-    axios.get('http://localhost:5001/api/products')
+    axios.get(`${VITE_API_BASE_URL}/api/products`)
       .then(res => Array.isArray(res.data) && setProducts(res.data))
       .catch(() => setProducts([]));
   }, []);
@@ -49,7 +50,7 @@ export default function PosPage() {
     if (saleItems.length === 0) return alert('No items to sell');
 
     try {
-      await axios.post('http://localhost:5001/api/sales', {
+      await axios.post(`${VITE_API_BASE_URL}/api/sales`, {
         worker: 'worker_id_placeholder',
         saleItems,
         totalAmount: total,
@@ -63,9 +64,9 @@ export default function PosPage() {
 
   const handleSendDailySales = async () => {
     try {
-      const res = await axios.get('http://localhost:5001/api/sales/today');
+      const res = await axios.get(`${VITE_API_BASE_URL}/api/sales/today`);
       const msg = `📊 *Daily Sales Report*\nTotal Orders: ${res.data.count}\nTotal Amount: Ksh ${res.data.total}`;
-      await axios.post('http://localhost:5001/api/whatsapp/text', {
+      await axios.post(`${VITE_API_BASE_URL}/api/whatsapp/tex`, {
         phone: '254718601536',
         message: msg,
       });

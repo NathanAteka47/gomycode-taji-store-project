@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { motion } from 'framer-motion';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
+const VITE_API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5001';;
 
 export default function SignupPage() {
   const [name, setName] = useState('');
@@ -12,7 +13,7 @@ export default function SignupPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [strength, setStrength] = useState('');
   const navigate = useNavigate();
-
+  
   const checkStrength = (pwd: string) => {
     if (pwd.length < 6) return setStrength('Weak');
     if (/[A-Z]/.test(pwd) && /[0-9]/.test(pwd) && /[^A-Za-z0-9]/.test(pwd)) {
@@ -30,7 +31,7 @@ export default function SignupPage() {
     }
 
     try {
-      const res = await axios.post('http://localhost:5001/api/users/register', {
+      const res = await axios.post(`${VITE_API_BASE_URL}/api/users/register`, {
         name,
         phoneNumber,
         password,
