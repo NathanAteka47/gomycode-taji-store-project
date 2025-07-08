@@ -1,33 +1,42 @@
 import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
+import User from '../models/userModel';
 
 interface AuthRequest extends Request {
   user?: any;
 }
 
-export const protectUser = (req: AuthRequest, res: Response, next: NextFunction) => {
-  const token = req.headers.authorization?.split(' ')[1];
-  if (!token) return res.status(401).json({ message: 'Not authorized, no token' });
+// ✅ Middleware to protect any logged-in user
+export const protectUser = async (req: AuthRequest, res: Response, next: NextFunction) => {
+  const authHeader = req.headers.authorization;
+
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    return res.status(401).json({ message: 'Not authorized, no token' });
+  }
+
+  const token = authHeader.split(' ')[1];
 
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET!);
-    req.user = decoded;
+    const decoded = jwt.verify(token, process.env.JWT_SECRET!) as { id: string };
+    const user = await User.findById(decoded.id).select('-password');
+
+    if (!user) {
+      return res.status(401).json({ message: 'Not authorized, user not found' });
+    }
+
+    req.user = user;
     next();
   } catch (err) {
-    res.status(401).json({ message: 'Invalid token' });
+    return res.status(401).json({ message: 'Invalid token' });
   }
 };
 
-export const protectAdmin = (req: AuthRequest, res: Response, next: NextFunction) => {
-  const token = req.headers.authorization?.split(' ')[1];
-  if (!token) return res.status(401).json({ message: 'Not authorized, no token' });
-
-  try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET!) as any;
-    if (!decoded.admin) return res.status(403).json({ message: 'Access denied' });
-    req.user = decoded;
+// ✅ Middleware to restrict access to admin users
+export const protectAdmin = async (req: AuthRequest, res: Response, next: NextFunction) => {
+  await protectUser(req, res, async () => {
+    if (!req.user || !req.user.isAdmin) {
+      return res.status(403).json({ message: 'Access denied: Admins only' });
+    }
     next();
-  } catch (err) {
-    res.status(401).json({ message: 'Invalid token' });
-  }
+  });
 };
