@@ -3,14 +3,15 @@ import axios from 'axios';
 import { IProduct } from '../types';
 import ProductCard from '../components/ProductCard';
 import { motion } from 'framer-motion';
+const VITE_API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5001';;
 
 export default function ProductsPage() {
   const [products, setProducts] = useState<IProduct[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
-
+  console.log('API Base URL:', VITE_API_BASE_URL);
   useEffect(() => {
-    axios.get('http://localhost:5001/api/products')
+    axios.get(`${VITE_API_BASE_URL}/api/products`)
       .then(res => {
         if (Array.isArray(res.data)) {
           setProducts(res.data);

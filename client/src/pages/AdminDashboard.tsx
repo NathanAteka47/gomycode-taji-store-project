@@ -5,6 +5,7 @@ import AddWorkerForm from '../components/AddWorkerForm';
 import WorkerList from '../components/WorkerList';
 // import PosPage from '../components/Pospage';
 import { motion } from 'framer-motion';
+const VITE_API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5001';;
 
 interface Product {
   _id: string;
@@ -27,13 +28,13 @@ export default function AdminDashboard() {
   const [products, setProducts] = useState<Product[]>([]);
   const [workers, setWorkers] = useState<Worker[]>([]);
   const [loading, setLoading] = useState(true);
-
+  
   useEffect(() => {
     const fetchData = async () => {
       try {
         const [productRes, workerRes] = await Promise.all([
-          axios.get('http://localhost:5001/api/products'),
-          axios.get('http://localhost:5001/api/workers'),
+          axios.get(`${VITE_API_BASE_URL}/api/products`),
+          axios.get(`${VITE_API_BASE_URL}/api/workers`),
         ]);
         if (Array.isArray(productRes.data)) setProducts(productRes.data);
         if (Array.isArray(workerRes.data)) setWorkers(workerRes.data);
@@ -49,7 +50,7 @@ export default function AdminDashboard() {
 
   const removeProduct = async (id: string) => {
     try {
-      await axios.delete(`http://localhost:5001/api/products/${id}`);
+      await axios.delete(`${VITE_API_BASE_URL}/api/products/${id}`);
       setProducts(prev => prev.filter(p => p._id !== id));
     } catch (error) {
       console.error('Failed to remove product:', error);
@@ -58,7 +59,7 @@ export default function AdminDashboard() {
 
   const removeWorker = async (id: string) => {
     try {
-      await axios.delete(`http://localhost:5001/api/workers/${id}`);
+      await axios.delete(`${VITE_API_BASE_URL}/api/workers/${id}`);
       setWorkers(prev => prev.filter(w => w._id !== id));
     } catch (error) {
       console.error('Failed to remove worker:', error);

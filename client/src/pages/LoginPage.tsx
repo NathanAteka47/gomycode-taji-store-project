@@ -3,17 +3,18 @@ import { useNavigate, Link } from "react-router-dom";
 import axios from "axios";
 import { motion } from "framer-motion";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
+import { VITE_API_BASE_URL } from "../constants/URLs";
 
 export default function LoginPage() {
   const [phoneNumber, setPhoneNumber] = useState("");
   const [password, setPassword] = useState("");
   const [visible, setVisible] = useState(false);
   const navigate = useNavigate();
-
+  
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const res = await axios.post("http://localhost:5001/api/users/login", {
+      const res = await axios.post(`${VITE_API_BASE_URL}/api/users/login`, {
         phoneNumber,
         password,
       });
