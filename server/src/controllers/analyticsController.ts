@@ -22,7 +22,8 @@ export const getTopProducts = async (req: Request, res: Response) => {
 
     orders.forEach(order => {
       order.orderItems.forEach(item => {
-        productCounts[item._id] = (productCounts[item._id] || 0) + item.qty;
+        const key = item._id.toString();
+        productCounts[key] = (productCounts[key] || 0) + item.qty;
       });
     });
 

@@ -1,7 +1,8 @@
 import { Request, Response } from 'express';
 import axios from 'axios';
+import FormData from 'form-data';
 
-export const sendWhatsAppText = async (req: Request, res: Response) => {
+export const sendWhatsAppText = async (req: Request, res: Response): Promise<void> => {
   try {
     const { message, phone } = req.body;
 
@@ -18,10 +19,14 @@ export const sendWhatsAppText = async (req: Request, res: Response) => {
   }
 };
 
-export const sendWhatsAppFile = async (req: Request, res: Response) => {
+export const sendWhatsAppFile = async (req: Request, res: Response): Promise<void> => {
   try {
     const { phone, caption } = req.body;
     const file = req.file;
+    if (!file) {
+      res.status(400).json({ message: 'No file uploaded' });
+      return;
+    }
 
     const form = new FormData();
     form.append('token', process.env.ULTRAMSG_TOKEN || '');
@@ -29,8 +34,8 @@ export const sendWhatsAppFile = async (req: Request, res: Response) => {
     form.append('caption', caption);
     form.append('filename', file.originalname);
     form.append('document', file.buffer, {
-    filename: file.originalname,
-    contentType: file.mimetype,
+      filename: file.originalname,
+      contentType: file.mimetype,
     });
 
     const response = await axios.post(`https://api.ultramsg.com/instance${process.env.ULTRAMSG_INSTANCE_ID}/messages/document`, form, {
@@ -40,6 +45,6 @@ export const sendWhatsAppFile = async (req: Request, res: Response) => {
     res.status(200).json({ sent: true, data: response.data });
   } catch (err) {
     console.error('❌ WhatsApp File Send Failed:', err);
-    res.status(500).json({ message: 'Failed to send receipt to WhatsApp' });
+    res.status(500).json({ message: 'Failed to send file to WhatsApp' });
   }
 };

@@ -1,11 +1,14 @@
 import { Request, Response } from 'express';
 import Order from '../models/orderModel';
 
-export const recordPayment = async (req: Request, res: Response) => {
+export const recordPayment = async (req: Request, res: Response): Promise<void> => {
   const { orderId, method } = req.body;
   try {
     const order = await Order.findById(orderId);
-    if (!order) return res.status(404).json({ message: 'Order not found' });
+    if (!order) {
+      res.status(404).json({ message: 'Order not found' });
+      return;
+    }
     order.isPaid = true;
     order.paidAt = new Date();
     order.paymentMethod = method;
@@ -16,7 +19,7 @@ export const recordPayment = async (req: Request, res: Response) => {
   }
 };
 
-export const getUnpaidOrders = async (req: Request, res: Response) => {
+export const getUnpaidOrders = async (req: Request, res: Response): Promise<void> => {
   try {
     const unpaid = await Order.find({ isPaid: false });
     res.json(unpaid);

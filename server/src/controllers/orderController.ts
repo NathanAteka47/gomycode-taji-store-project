@@ -13,12 +13,13 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-export const createOrder = async (req: Request, res: Response) => {
+export const createOrder = async (req: Request, res: Response): Promise<void> => {
   try {
     const { orderItems, shippingInfo, totalPrice, sendEmail, user } = req.body;
 
     if (!user || !orderItems || !shippingInfo || !shippingInfo.email || !totalPrice) {
-      return res.status(400).json({ message: 'Missing required order fields' });
+      res.status(400).json({ message: 'Missing required order fields' });
+      return;
     }
 
     // Get user from JWT token if available
@@ -63,15 +64,18 @@ const orderSummary = (orderItems as { name: string; qty: number; price: number }
     }
 
     res.status(201).json(newOrder);
-  } catch (error: any) {
-    console.error('❌ Order creation error:', error.message);
-    res.status(400).json({ message: 'Error creating order', error: error.message });
+  } catch (error) {
+    res.status(500).json({ message: 'Order creation failed', error });
   }
 };
 
-export const getAllOrders = async (req: Request, res: Response) => {
-  const orders = await Order.find().populate('user', 'name phoneNumber');
-  res.json(orders);
+export const getAllOrders = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const orders = await Order.find().populate('user', 'name phoneNumber');
+    res.json(orders);
+  } catch (error) {
+    res.status(500).json({ message: 'Failed to retrieve orders', error });
+  }
 };
 
 console.log('✅ EMAIL_USER:', process.env.EMAIL_USER);

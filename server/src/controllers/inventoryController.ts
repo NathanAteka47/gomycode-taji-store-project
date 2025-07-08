@@ -1,6 +1,7 @@
+import { Request, Response } from 'express';
 import InventoryAlert from '../models/inventoryAlertModel';
 
-export const checkInventoryLevels = async (req, res) => {
+export const checkInventoryLevels = async (req: Request, res: Response) => {
   try {
     const alerts = await InventoryAlert.find();
     res.json(alerts);

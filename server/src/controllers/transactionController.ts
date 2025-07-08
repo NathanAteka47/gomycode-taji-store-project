@@ -1,6 +1,7 @@
+import { Request, Response } from 'express';
 import Payment from '../models/paymentModel';
 
-export const getTransactions = async (req, res) => {
+export const getTransactions = async (req: Request, res: Response) => {
   try {
     const payments = await Payment.find().sort({ createdAt: -1 });
     res.json(payments);

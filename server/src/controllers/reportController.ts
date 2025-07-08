@@ -4,7 +4,7 @@ import Order from '../models/orderModel';
 
 export const exportSalesReport = async (req: Request, res: Response) => {
   try {
-    const orders = await Order.find().lean();
+    const orders = await Order.find().populate('user').lean();
 
     const workbook = new ExcelJS.Workbook();
     const worksheet = workbook.addWorksheet('Sales Report');
@@ -19,7 +19,7 @@ export const exportSalesReport = async (req: Request, res: Response) => {
     orders.forEach(order => {
       worksheet.addRow({
         date: new Date(order.createdAt).toLocaleString(),
-        customer: order.user?.name || 'Guest',
+        customer: typeof order.user === 'object' && 'name' in order.user ? (order.user as any).name : 'Guest',
         totalPrice: order.totalPrice,
         items: order.orderItems.map(item => `${item.name} x${item.qty}`).join(', '),
       });

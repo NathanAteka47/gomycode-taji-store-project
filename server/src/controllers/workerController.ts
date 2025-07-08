@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import Worker from '../models/workerModel';
 
-export const createWorker = async (req: Request, res: Response) => {
+export const createWorker = async (req: Request, res: Response): Promise<void> => {
   try {
     const worker = await Worker.create(req.body);
     res.status(201).json(worker);
@@ -10,18 +10,21 @@ export const createWorker = async (req: Request, res: Response) => {
   }
 };
 
-export const getAllWorkers = async (req: Request, res: Response) => {
+export const getAllWorkers = async (req: Request, res: Response): Promise<void> => {
   const workers = await Worker.find();
   res.json(workers);
 };
 
-export const getWorkerById = async (req: Request, res: Response) => {
+export const getWorkerById = async (req: Request, res: Response): Promise<void> => {
   const worker = await Worker.findById(req.params.id);
-  if (!worker) return res.status(404).json({ message: 'Worker not found' });
+  if (!worker) {
+    res.status(404).json({ message: 'Worker not found' });
+    return;
+  }
   res.json(worker);
 };
 
-export const updateWorker = async (req: Request, res: Response) => {
+export const updateWorker = async (req: Request, res: Response): Promise<void> => {
   try {
     const updated = await Worker.findByIdAndUpdate(req.params.id, req.body, { new: true });
     res.json(updated);
@@ -30,7 +33,7 @@ export const updateWorker = async (req: Request, res: Response) => {
   }
 };
 
-export const deleteWorker = async (req: Request, res: Response) => {
+export const deleteWorker = async (req: Request, res: Response): Promise<void> => {
   try {
     await Worker.findByIdAndDelete(req.params.id);
     res.json({ message: 'Worker deleted successfully' });

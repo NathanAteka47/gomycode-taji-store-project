@@ -10,6 +10,8 @@ const orderSchema = new mongoose.Schema({
     }],
     totalPrice: { type: Number, required: true },
     isPaid: { type: Boolean, default: false }, // To be updated by payment gateway
+    paidAt: { type: Date },
+    paymentMethod: { type: String },
     status: { type: String, default: 'Pending', enum: ['Pending', 'Processing', 'Shipped', 'Delivered', 'Cancelled'] }
 }, { timestamps: true });
 

@@ -1,7 +1,8 @@
-import { Request, RequestHandler, Response } from 'express';
+import { Request, Response } from 'express';
 import jwt from 'jsonwebtoken';
 import User from '../models/userModel';
 import { pwdConfirm, pwdHasher } from '../utils/bcrypt';
+import { AuthRequest } from '../middleware/authMiddleware';
 
 // 🔐 Utility to generate JWT token
 const generateToken = (id: string): string => {
@@ -10,13 +11,14 @@ const generateToken = (id: string): string => {
 
 // ✅ @desc    Register a new user
 // ✅ @route   POST /api/users/register
-export const registerUser = async (req: Request, res: Response) => {
+export const registerUser = async (req: Request, res: Response): Promise<void> => {
   const { name, phoneNumber, password } = req.body;
 
   try {
     const existingUser = await User.findOne({ phoneNumber });
     if (existingUser) {
-      return res.status(400).json({ message: 'User already exists' });
+      res.status(400).json({ message: 'User already exists' });
+      return;
     }
 
     const user = new User({
@@ -38,15 +40,14 @@ export const registerUser = async (req: Request, res: Response) => {
         isAdmin: user.isAdmin,
       },
     });
-  } catch (err: any) {
-    console.error('❌ Registration Error:', err.message);
-    res.status(500).json({ message: 'Server error' });
+  } catch (error) {
+    res.status(500).json({ message: 'Registration failed', error });
   }
 };
 
 // ✅ @desc    Authenticate user & return token
 // ✅ @route   POST /api/users/login
-export const loginUser = async (req: Request, res: Response) => {
+export const loginUser = async (req: Request, res: Response): Promise<void> => {
   const { phoneNumber, password } = req.body;
 
   try {
@@ -74,35 +75,37 @@ export const loginUser = async (req: Request, res: Response) => {
         isAdmin: user.isAdmin,
       },
     });
-  } catch (err: any) {
-    console.error('❌ Login Error:', err.message);
-    res.status(500).json({ message: 'Server error' });
+  } catch (error) {
+    res.status(500).json({ message: 'Login failed', error });
   }
 };
 
 // ✅ @desc    Update user password
 // ✅ @route   PUT /api/users/:id/password
-export const updateUserPassword = async (req: Request, res: Response) => {
+export const updateUserPassword = async (req: AuthRequest, res: Response): Promise<void> => {
   const { id } = req.params;
   const { password } = req.body;
 
   try {
     const user = await User.findById(id);
-    if (!user) return res.status(404).json({ message: 'User not found' });
+    if (!user) {
+      res.status(404).json({ message: 'User not found' });
+      return;
+    }
 
     const hashedPassword = pwdHasher(password);
     user.password = hashedPassword;
     await user.save();
 
     res.json({ message: 'Password updated successfully' });
-  } catch (err) {
-    res.status(500).json({ message: 'Server error' });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error', error });
   }
 };
 
 // ✅ @desc    Update user profile
 // ✅ @route   PUT /api/users/:id
-export const updateUserProfile: RequestHandler = async (req, res) => {
+export const updateUserProfile = async (req: AuthRequest, res: Response): Promise<void> => {
   const { id } = req.params;
   const { name, phoneNumber } = req.body;
 
@@ -119,9 +122,7 @@ export const updateUserProfile: RequestHandler = async (req, res) => {
     }
 
     res.json(updatedUser);
-    return;
-  } catch (err) {
-    res.status(500).json({ message: 'Error updating user profile' });
-    return;
+  } catch (error) {
+    res.status(500).json({ message: 'Error updating user profile', error });
   }
 };

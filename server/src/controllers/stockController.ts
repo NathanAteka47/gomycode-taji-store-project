@@ -1,6 +1,7 @@
+import { Request, Response } from 'express';
 import StockAlert from '../models/stockAlertModel';
 
-export const getStockAlerts = async (req, res) => {
+export const getStockAlerts = async (req: Request, res: Response) => {
   try {
     const alerts = await StockAlert.find();
     res.json(alerts);

@@ -24,13 +24,14 @@ const getToken = async (): Promise<string> => {
 };
 
 // ✅ STK Push Simulation Route
-export const simulateSTKPush = async (req: Request, res: Response) => {
+export const simulateSTKPush = async (req: Request, res: Response): Promise<void> => {
   try {
     const token = await getToken();
     const { phone, amount } = req.body;
 
     if (!phone || !amount) {
-      return res.status(400).json({ error: 'Phone and amount are required' });
+      res.status(400).json({ error: 'Phone and amount are required' });
+      return;
     }
 
     const timestamp = new Date().toISOString().replace(/[-T:.Z]/g, '').slice(0, 14);
@@ -56,20 +57,20 @@ export const simulateSTKPush = async (req: Request, res: Response) => {
       headers: { Authorization: `Bearer ${token}` },
     });
 
-    return res.status(200).json(data);
-  } catch (err: any) {
-    console.error('STK Push Error:', err.response?.data || err.message);
-    return res.status(500).json({ error: 'Failed to initiate M-Pesa STK push' });
+    res.status(200).json(data);
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to simulate STK Push', details: error });
   }
 };
 
 // ✅ Callback Processor Route
-export const mpesaCallback = async (req: Request, res: Response) => {
+export const mpesaCallback = async (req: Request, res: Response): Promise<void> => {
   try {
     const data = req.body.Body?.stkCallback;
 
     if (!data) {
-      return res.status(400).json({ error: 'Invalid callback structure' });
+      res.status(400).json({ error: 'Invalid callback structure' });
+      return;
     }
 
     const {
@@ -106,9 +107,9 @@ export const mpesaCallback = async (req: Request, res: Response) => {
     });
 
     console.log('✅ Payment saved to DB');
-    return res.status(200).json({ message: 'Payment logged successfully' });
+    res.status(200).json({ message: 'Payment logged successfully' });
   } catch (err) {
     console.error('❌ Callback Error:', err);
-    return res.status(500).json({ error: 'Failed to process callback' });
+    res.status(500).json({ error: 'Failed to process callback' });
   }
 };
