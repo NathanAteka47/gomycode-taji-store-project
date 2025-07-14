@@ -14,8 +14,16 @@ connectDB();
 const app = express();
 const PORT = process.env.PORT || 5001;
 
-// Middleware
-app.use(cors());
+// CORS configuration for deployed and local frontend
+app.use(cors({
+  origin: [
+    'https://taji-store.vercel.app', // deployed frontend
+    'http://localhost:3000',          // local development
+    'https://tajistore.netlify.app'
+  ],
+  credentials: true
+}));
+
 app.use(express.json());
 
 // ✅ Load all routes from routes/index.ts

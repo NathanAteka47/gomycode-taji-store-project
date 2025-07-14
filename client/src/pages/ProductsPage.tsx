@@ -3,7 +3,7 @@ import axios from 'axios';
 import { IProduct } from '../types';
 import ProductCard from '../components/ProductCard';
 import { motion } from 'framer-motion';
-const VITE_API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5001';;
+const VITE_API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5001';
 
 export default function ProductsPage() {
   const [products, setProducts] = useState<IProduct[]>([]);
