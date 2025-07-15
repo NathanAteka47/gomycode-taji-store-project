@@ -13,11 +13,8 @@ dotenv_1.default.config();
 (0, db_1.default)();
 const app = (0, express_1.default)();
 const PORT = process.env.PORT || 5001;
-// Middleware
-app.use((0, cors_1.default)({
-    origin: 'http://localhost:3000',
-    credentials: true
-}));
+// CORS configuration for deployed and local frontend
+app.use((0, cors_1.default)());
 app.use(express_1.default.json());
 // ✅ Load all routes from routes/index.ts
 app.use(routes_1.default);
