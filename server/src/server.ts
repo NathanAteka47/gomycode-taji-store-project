@@ -6,8 +6,6 @@ import connectDB from './config/db';
 // 🔁 Central route loader
 import allRoutes from './routes';
 
-
-
 dotenv.config();
 connectDB();
 
@@ -15,14 +13,7 @@ const app = express();
 const PORT = process.env.PORT || 5001;
 
 // CORS configuration for deployed and local frontend
-app.use(cors({
-  origin: [
-    'https://taji-store.vercel.app', // deployed frontend
-    'http://localhost:3000',          // local development
-    'https://tajistore.netlify.app'
-  ],
-  credentials: true
-}));
+app.use(cors());
 
 app.use(express.json());
 
