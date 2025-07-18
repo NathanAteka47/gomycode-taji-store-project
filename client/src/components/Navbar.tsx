@@ -9,6 +9,9 @@ export default function Navbar() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userInitials, setUserInitials] = useState("");
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [cartOpen, setCartOpen] = useState(false);
+  const cart = useSelector((state: any) => state.cart.items || []);
+  const cartCount = cart.reduce((sum: number, item: any) => sum + item.qty, 0);
 
   const totalItems = useSelector((state: RootState) =>
     state.cart.items.reduce((sum, item) => sum + item.qty, 0)
@@ -62,7 +65,7 @@ export default function Navbar() {
   };
 
   return (
-    <nav className="bg-[#8B0000] text-white shadow-md sticky top-0 z-50">
+    <nav className="bg-[#8B0000] text-white shadow-md sticky top-0 z-50 transition-all duration-300">
       <div className="max-w-6xl mx-auto px-4 py-3 flex justify-between items-center">
         <Link to="/" className="text-2xl font-bold tracking-tight">Taji Store</Link>
 
@@ -100,16 +103,41 @@ export default function Navbar() {
           )}
         </ul>
 
-        {/* Cart Icon */}
-        <div className="relative">
-          <Link to="/cart" className="relative block">
-            <FaShoppingCart className="text-white text-xl" />
-            {totalItems > 0 && (
-              <span className="absolute -top-2 -right-2 bg-white text-red-900 text-xs font-bold px-1.5 rounded-full">
-                {totalItems}
+        {/* Cart Icon with Preview */}
+        <div className="relative ml-4">
+          <button
+            className="relative"
+            onClick={() => setCartOpen((open) => !open)}
+            onMouseEnter={() => setCartOpen(true)}
+            onMouseLeave={() => setTimeout(() => setCartOpen(false), 300)}
+            aria-label="Cart"
+          >
+            <FaShoppingCart size={22} />
+            {cartCount > 0 && (
+              <span className="absolute -top-2 -right-2 bg-yellow-400 text-red-900 rounded-full px-2 text-xs font-bold shadow">
+                {cartCount}
               </span>
             )}
-          </Link>
+          </button>
+          {cartOpen && cart.length > 0 && (
+            <div
+              className="absolute right-0 mt-2 w-64 bg-white text-red-900 rounded-lg shadow-lg p-4 z-50 animate-fadeIn"
+              onMouseEnter={() => setCartOpen(true)}
+              onMouseLeave={() => setCartOpen(false)}
+            >
+              <h4 className="font-bold mb-2">Cart Preview</h4>
+              <ul className="divide-y divide-gray-200 max-h-48 overflow-y-auto">
+                {cart.slice(0, 4).map((item: any) => (
+                  <li key={item._id} className="py-2 flex items-center gap-2">
+                    <img src={item.image} alt={item.name} className="w-10 h-10 object-cover rounded" onError={(e) => { (e.currentTarget as HTMLImageElement).src = '/images/placeholder.jpg'; }} />
+                    <span className="flex-1 text-sm">{item.name}</span>
+                    <span className="text-xs font-bold">x{item.qty}</span>
+                  </li>
+                ))}
+              </ul>
+              <Link to="/cart" className="block mt-3 text-center bg-red-700 text-white py-1 rounded hover:bg-red-800 transition">View Cart</Link>
+            </div>
+          )}
         </div>
       </div>
 

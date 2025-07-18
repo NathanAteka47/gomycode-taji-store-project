@@ -99,8 +99,9 @@ export default function AdminDashboard() {
                   <img
                     src={product.image}
                     alt={product.name}
-                    onError={(e) => ((e.target as HTMLImageElement).src = '/default-image.jpg')}
-                    className="w-full h-40 object-cover rounded mb-4"
+                    onError={(e) => ((e.target as HTMLImageElement).src = '/images/placeholder.jpg')}
+                    className="w-full h-40 object-cover rounded mb-4 shadow"
+                    loading="lazy"
                   />
                   <h3 className="font-bold text-lg">{product.name}</h3>
                   <p className="text-sm text-gray-700 mb-1">{product.description}</p>

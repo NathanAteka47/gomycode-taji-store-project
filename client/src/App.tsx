@@ -13,6 +13,7 @@ import CheckoutPage from './pages/CheckoutPage';
 import Footer from './components/Footer';
 import PaymentDetailsPage from './pages/PaymentDetailsPage';
 import { useState, useEffect } from 'react';
+import ForgotPasswordPage from "./pages/ForgotPasswordPage";
 
 
 
@@ -39,6 +40,7 @@ function App() {
         <Route path="/profile" element={<UserProfile />} /> {/* ✅ New route */}
         <Route path="/checkout" element={<CheckoutPage />} />
         <Route path="/payment-details" element={<PaymentDetailsPage />} />
+        <Route path="/forgot-password" element={<ForgotPasswordPage />} />
       </Routes>
       <Footer />
     </Router>

@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.updateUserProfile = exports.updateUserPassword = exports.loginUser = exports.registerUser = void 0;
+exports.resetPassword = exports.updateUserProfile = exports.updateUserPassword = exports.loginUser = exports.registerUser = void 0;
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const userModel_1 = __importDefault(require("../models/userModel"));
 const bcrypt_1 = require("../utils/bcrypt");
@@ -122,3 +122,21 @@ const updateUserProfile = (req, res) => __awaiter(void 0, void 0, void 0, functi
     }
 });
 exports.updateUserProfile = updateUserProfile;
+// POST /api/users/reset-password
+const resetPassword = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { phoneNumber, newPassword } = req.body;
+    try {
+        const user = yield userModel_1.default.findOne({ phoneNumber });
+        if (!user) {
+            res.status(404).json({ message: "User not found" });
+            return;
+        }
+        user.password = newPassword; // Let pre-save hook hash it
+        yield user.save();
+        res.json({ message: "Password updated successfully" });
+    }
+    catch (error) {
+        res.status(500).json({ message: "Server error" });
+    }
+});
+exports.resetPassword = resetPassword;

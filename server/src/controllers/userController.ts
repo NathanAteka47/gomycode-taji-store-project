@@ -126,3 +126,20 @@ export const updateUserProfile = async (req: AuthRequest, res: Response): Promis
     res.status(500).json({ message: 'Error updating user profile', error });
   }
 };
+
+// POST /api/users/reset-password
+export const resetPassword = async (req: Request, res: Response): Promise<void> => {
+  const { phoneNumber, newPassword } = req.body;
+  try {
+    const user = await User.findOne({ phoneNumber });
+    if (!user) {
+      res.status(404).json({ message: "User not found" });
+      return;
+    }
+    user.password = newPassword; // Let pre-save hook hash it
+    await user.save();
+    res.json({ message: "Password updated successfully" });
+  } catch (error) {
+    res.status(500).json({ message: "Server error" });
+  }
+};

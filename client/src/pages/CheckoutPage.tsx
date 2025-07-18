@@ -2,121 +2,155 @@ import { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from '../store';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 import { motion } from 'framer-motion';
+
+const VITE_API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5001';
 
 export default function CheckoutPage() {
   const cart = useSelector((state: RootState) => state.cart.items);
   const navigate = useNavigate();
   const [form, setForm] = useState({
-    fullName: '',
+    name: '',
     address: '',
-    city: '',
     phone: '',
     email: '',
   });
+  const [message, setMessage] = useState('');
+  const [loading, setLoading] = useState(false);
 
   const total = cart.reduce((sum, item) => sum + item.price * item.qty, 0);
 
   useEffect(() => {
     const user = JSON.parse(localStorage.getItem('tajiUser') || 'null');
     if (!user) navigate('/login');
-    else setForm(prev => ({ ...prev, phone: user.phoneNumber, email: user.email }));
+    else setForm(prev => ({
+      ...prev,
+      phone: user.phoneNumber || '',
+      email: user.email || ''
+    }));
   }, [navigate]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    localStorage.setItem('tajiCheckoutForm', JSON.stringify(form));
-    navigate('/payment-details');
+    setMessage('');
+    setLoading(true);
+    try {
+      const user = JSON.parse(localStorage.getItem('tajiUser') || 'null');
+      const orderPayload = {
+        user: user?._id,
+        orderItems: cart.map(item => ({
+          name: item.name,
+          qty: item.qty,
+          price: item.price,
+          product: item._id
+        })),
+        shippingInfo: {
+          name: form.name,
+          address: form.address,
+          phone: form.phone,
+          email: form.email
+        },
+        totalPrice: total
+      };
+      await axios.post(`${VITE_API_BASE_URL}/api/orders`, orderPayload);
+      setMessage('✅ Order placed successfully! Redirecting to payment...');
+      setTimeout(() => {
+        // Optionally clear cart here if you want
+        navigate('/payment-details');
+      }, 1500);
+    } catch (err) {
+      setMessage('❌ Failed to place order. Please try again.');
+    } finally {
+      setLoading(false);
+    }
   };
+
+  if (cart.length === 0) {
+    return (
+      <motion.div
+        initial={{ opacity: 0, y: 30 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6 }}
+        className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-red-200 to-red-100"
+      >
+        <img src="/images/placeholder.jpg" alt="Empty cart" className="w-32 h-32 mb-4 opacity-60" />
+        <p className="text-lg text-gray-600 mb-4">Your cart is empty.</p>
+      </motion.div>
+    );
+  }
 
   return (
     <motion.div
-      className="min-h-screen bg-gradient-to-br from-red-100 to-white text-red-900 p-6"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ duration: 0.5 }}
+      initial={{ opacity: 0, y: 30 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.6 }}
+      className="min-h-screen flex items-center justify-center bg-gradient-to-br from-red-200 to-red-100"
     >
-      <h1 className="text-4xl font-extrabold mb-8 text-center text-red-800 tracking-wide">Secure Checkout</h1>
-
-      <form onSubmit={handleSubmit} className="max-w-5xl mx-auto grid md:grid-cols-2 gap-8 shadow-lg rounded-lg bg-white p-6">
-        <div>
-          <h2 className="text-2xl font-semibold mb-6 border-b pb-2">Shipping Details</h2>
-          <input
-            type="text"
-            name="fullName"
-            placeholder="Full Name"
-            value={form.fullName}
-            onChange={handleChange}
-            required
-            className="w-full mb-4 p-3 border border-red-300 rounded focus:ring-2 focus:ring-red-500"
-          />
-          <input
-            type="email"
-            name="email"
-            placeholder="Email Address"
-            value={form.email}
-            onChange={handleChange}
-            required
-            className="w-full mb-4 p-3 border border-red-300 rounded focus:ring-2 focus:ring-red-500"
-          />
-          <input
-            type="text"
-            name="address"
-            placeholder="Address"
-            value={form.address}
-            onChange={handleChange}
-            required
-            className="w-full mb-4 p-3 border border-red-300 rounded focus:ring-2 focus:ring-red-500"
-          />
-          <input
-            type="text"
-            name="city"
-            placeholder="City / Town"
-            value={form.city}
-            onChange={handleChange}
-            required
-            className="w-full mb-4 p-3 border border-red-300 rounded focus:ring-2 focus:ring-red-500"
-          />
-          <input
-            type="text"
-            name="phone"
-            placeholder="Phone Number"
-            value={form.phone}
-            onChange={handleChange}
-            required
-            className="w-full mb-4 p-3 border border-red-300 rounded focus:ring-2 focus:ring-red-500"
-          />
-        </div>
-
-        <div>
-          <h2 className="text-2xl font-semibold mb-6 border-b pb-2">Order Summary</h2>
-          <div className="border p-6 rounded bg-gray-50 space-y-4">
-            {cart.map((item) => (
-              <div key={item._id} className="flex justify-between items-center">
-                <div>
-                  <p className="font-bold text-lg">{item.name}</p>
-                  <p className="text-sm text-gray-600">Qty: {item.qty}</p>
-                </div>
-                <p className="font-bold text-red-700">Ksh {(item.price * item.qty).toLocaleString()}</p>
-              </div>
-            ))}
-            <hr />
-            <div className="flex justify-between font-bold text-xl">
-              <span>Total</span>
-              <span className="text-red-800">Ksh {total.toLocaleString()}</span>
-            </div>
-            <button
-              type="submit"
-              className="w-full bg-red-800 text-white py-3 mt-6 rounded hover:bg-red-700 text-lg font-semibold shadow-md transition"
-            >
-              🚀 Confirm & Proceed to Payment
-            </button>
-          </div>
-        </div>
+      <form
+        onSubmit={handleSubmit}
+        className="bg-white p-8 rounded-xl shadow-lg w-full max-w-md"
+        aria-label="Checkout Form"
+      >
+        <h2 className="text-2xl font-bold text-red-800 mb-4 text-center">Checkout</h2>
+        <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">Name</label>
+        <input
+          id="name"
+          name="name"
+          type="text"
+          placeholder="Full Name"
+          value={form.name}
+          onChange={handleChange}
+          required
+          className="w-full border-b-2 border-red-400 focus:outline-none focus:ring-2 focus:ring-red-500 py-2 mb-4"
+        />
+        <label htmlFor="address" className="block text-sm font-medium text-gray-700 mb-1">Address</label>
+        <input
+          id="address"
+          name="address"
+          type="text"
+          placeholder="Delivery Address"
+          value={form.address}
+          onChange={handleChange}
+          required
+          className="w-full border-b-2 border-red-400 focus:outline-none focus:ring-2 focus:ring-red-500 py-2 mb-4"
+        />
+        <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-1">Phone</label>
+        <input
+          id="phone"
+          name="phone"
+          type="text"
+          placeholder="Phone Number"
+          value={form.phone}
+          onChange={handleChange}
+          required
+          className="w-full border-b-2 border-red-400 focus:outline-none focus:ring-2 focus:ring-red-500 py-2 mb-4"
+        />
+        <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+        <input
+          id="email"
+          name="email"
+          type="email"
+          placeholder="Email Address"
+          value={form.email}
+          onChange={handleChange}
+          required
+          className="w-full border-b-2 border-red-400 focus:outline-none focus:ring-2 focus:ring-red-500 py-2 mb-6"
+        />
+        <button
+          type="submit"
+          className="w-full py-2 bg-red-700 text-white rounded hover:bg-red-600 transition"
+          disabled={loading}
+        >
+          {loading ? 'Placing order...' : 'Place Order'}
+        </button>
+        {message && (
+          <p className="mt-4 text-center text-sm text-gray-700">{message}</p>
+        )}
       </form>
     </motion.div>
   );

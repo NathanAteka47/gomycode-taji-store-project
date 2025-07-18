@@ -19,7 +19,9 @@ export default function ProductCard(product: IProduct) {
     <motion.div
       className="relative bg-white rounded-2xl shadow-lg overflow-hidden p-4 flex flex-col"
       whileHover={{ scale: 1.03 }}
-      transition={{ type: 'spring', stiffness: 300 }}
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ type: 'spring', stiffness: 300, damping: 24 }}
     >
       {/* Optional Badge */}
       <div className="absolute top-2 left-2 bg-yellow-400 text-black text-xs font-semibold px-2 py-1 rounded shadow">
@@ -27,11 +29,15 @@ export default function ProductCard(product: IProduct) {
       </div>
 
       {/* Product Image */}
-      <div className="overflow-hidden rounded-xl">
+      <div className="overflow-hidden rounded-xl group">
         <img
           src={product.image}
           alt={product.name}
-          className="w-full h-40 object-cover transform hover:scale-105 transition duration-300"
+          className="w-full h-40 object-cover transform group-hover:scale-110 transition duration-300 rounded-xl shadow"
+          loading="lazy"
+          onError={(e) => {
+            (e.currentTarget as HTMLImageElement).src = '/images/placeholder.jpg';
+          }}
         />
       </div>
 

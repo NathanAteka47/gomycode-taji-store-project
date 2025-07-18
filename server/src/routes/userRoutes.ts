@@ -3,9 +3,12 @@ import {
   registerUser,
   loginUser,
   updateUserPassword,
-  updateUserProfile
+  updateUserProfile,
+  resetPassword
 } from '../controllers/userController';
 import { protectUser } from '../middleware/authMiddleware';
+import bcrypt from "bcryptjs";
+import User from "../models/userModel";
 
 const router = express.Router();
 
@@ -16,5 +19,8 @@ router.post('/login', loginUser);
 // Protected
 router.put('/:id', protectUser as any, updateUserProfile);
 router.put('/:id/password', protectUser as any, updateUserPassword);
+
+router.post('/reset-password', resetPassword);
+
 
 export default router;

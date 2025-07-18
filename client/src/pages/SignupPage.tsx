@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
 import { motion } from 'framer-motion';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
@@ -12,6 +12,8 @@ export default function SignupPage() {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [strength, setStrength] = useState('');
+  const [message, setMessage] = useState('');
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   
   const checkStrength = (pwd: string) => {
@@ -23,159 +25,106 @@ export default function SignupPage() {
     }
   };
 
-  const handleSignup = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setMessage('');
     if (password !== confirmPassword) {
-      alert('❌ Passwords do not match');
+      setMessage('❌ Passwords do not match.');
       return;
     }
-
+    setLoading(true);
     try {
-      const res = await axios.post(`${VITE_API_BASE_URL}/api/users/register`, {
+      const response = await axios.post(`${VITE_API_BASE_URL}/api/users/register`, {
         name,
         phoneNumber,
         password,
       });
-
-      const { token, user } = res.data;
-
-      localStorage.setItem('tajiUserToken', token);
-      localStorage.setItem('tajiUser', JSON.stringify(user));
-
-      alert('🎉 Account created and logged in!');
-      navigate('/'); // ✅ Redirect directly to home/dashboard
-    } catch (err: unknown) {
-      const message = (err as Error).message || 'Signup failed.';
-      alert(message);
+      if (response.data?.token) {
+        setMessage('✅ Signup successful! Redirecting...');
+        setTimeout(() => navigate('/login'), 1500);
+      } else {
+        setMessage('❌ Signup failed. Please try again.');
+      }
+    } catch (err: any) {
+      setMessage('❌ Signup failed. Phone number may already be registered.');
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-red-800 to-red-600">
-      <motion.form
-        onSubmit={handleSignup}
-        initial={{ opacity: 0, y: 50 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6 }}
-        className="bg-white p-8 rounded-xl shadow-2xl max-w-md w-full"
+    <motion.div
+      initial={{ opacity: 0, y: 30 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.6 }}
+      className="min-h-screen flex items-center justify-center bg-gradient-to-br from-red-200 to-red-100"
+    >
+      <form
+        onSubmit={handleSubmit}
+        className="bg-white p-8 rounded-xl shadow-lg w-full max-w-md"
+        aria-label="Signup Form"
       >
-        <h2 className="text-3xl font-extrabold text-center text-red-800 mb-6">
-          Create Your Taji Account
-        </h2>
-
-        {/* Name */}
-        <div className="relative mb-5">
-          <input
-            type="text"
-            id="name"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            required
-            placeholder="Name"
-            className="peer w-full border-b-2 border-red-400 py-2 focus:outline-none placeholder-transparent"
-          />
-          <label
-            htmlFor="name"
-            className="absolute top-0 left-0 text-sm text-gray-600 peer-placeholder-shown:top-2.5 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400 peer-focus:top-0 peer-focus:text-sm peer-focus:text-red-700"
-          >
-            Full Name
-          </label>
-        </div>
-
-        {/* Phone */}
-        <div className="relative mb-5">
-          <input
-            type="text"
-            id="phone"
-            value={phoneNumber}
-            onChange={(e) => setPhoneNumber(e.target.value)}
-            required
-            placeholder="Phone Number"
-            className="peer w-full border-b-2 border-red-400 py-2 focus:outline-none placeholder-transparent"
-          />
-          <label
-            htmlFor="phone"
-            className="absolute top-0 left-0 text-sm text-gray-600 peer-placeholder-shown:top-2.5 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400 peer-focus:top-0 peer-focus:text-sm peer-focus:text-red-700"
-          >
-            Phone Number
-          </label>
-        </div>
-
-        {/* Password */}
-        <div className="relative mb-5">
-          <input
-            type={showPassword ? 'text' : 'password'}
-            id="password"
-            value={password}
-            onChange={(e) => {
-              setPassword(e.target.value);
-              checkStrength(e.target.value);
-            }}
-            required
-            placeholder="Password"
-            className="peer w-full border-b-2 border-red-400 py-2 focus:outline-none placeholder-transparent"
-          />
-          <label
-            htmlFor="password"
-            className="absolute top-0 left-0 text-sm text-gray-600 peer-placeholder-shown:top-2.5 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400 peer-focus:top-0 peer-focus:text-sm peer-focus:text-red-700"
-          >
-            Password
-          </label>
-          <span
-            onClick={() => setShowPassword(!showPassword)}
-            className="absolute right-2 top-2.5 text-gray-500 cursor-pointer"
-          >
-            {showPassword ? <FaEyeSlash /> : <FaEye />}
-          </span>
-          {password && (
-            <div className="mt-1 text-sm">
-              <span
-                className={`${
-                  strength === 'Strong'
-                    ? 'text-green-600'
-                    : strength === 'Moderate'
-                    ? 'text-orange-500'
-                    : 'text-red-500'
-                }`}
-              >
-                Password Strength: {strength}
-              </span>
-            </div>
-          )}
-        </div>
-
-        {/* Confirm Password */}
-        <div className="relative mb-6">
-          <input
-            type={showPassword ? 'text' : 'password'}
-            id="confirm"
-            value={confirmPassword}
-            onChange={(e) => setConfirmPassword(e.target.value)}
-            required
-            placeholder="Confirm Password"
-            className="peer w-full border-b-2 border-red-400 py-2 focus:outline-none placeholder-transparent"
-          />
-          <label
-            htmlFor="confirm"
-            className="absolute top-0 left-0 text-sm text-gray-600 peer-placeholder-shown:top-2.5 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400 peer-focus:top-0 peer-focus:text-sm peer-focus:text-red-700"
-          >
-            Confirm Password
-          </label>
-        </div>
-
+        <h2 className="text-2xl font-bold text-red-800 mb-4 text-center">Sign Up</h2>
+        <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">Name</label>
+        <input
+          id="name"
+          type="text"
+          placeholder="Full Name"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          required
+          className="w-full border-b-2 border-red-400 focus:outline-none focus:ring-2 focus:ring-red-500 py-2 mb-4"
+        />
+        <label htmlFor="phoneNumber" className="block text-sm font-medium text-gray-700 mb-1">Phone Number</label>
+        <input
+          id="phoneNumber"
+          type="text"
+          placeholder="Phone Number"
+          value={phoneNumber}
+          onChange={(e) => setPhoneNumber(e.target.value)}
+          required
+          className="w-full border-b-2 border-red-400 focus:outline-none focus:ring-2 focus:ring-red-500 py-2 mb-4"
+        />
+        <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">Password</label>
+        <input
+          id="password"
+          type={showPassword ? 'text' : 'password'}
+          placeholder="Password"
+          value={password}
+          onChange={(e) => {
+            setPassword(e.target.value);
+            checkStrength(e.target.value);
+          }}
+          required
+          className="w-full border-b-2 border-red-400 focus:outline-none focus:ring-2 focus:ring-red-500 py-2 mb-4"
+        />
+        <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 mb-1">Confirm Password</label>
+        <input
+          id="confirmPassword"
+          type={showPassword ? 'text' : 'password'}
+          placeholder="Confirm Password"
+          value={confirmPassword}
+          onChange={(e) => setConfirmPassword(e.target.value)}
+          required
+          className="w-full border-b-2 border-red-400 focus:outline-none focus:ring-2 focus:ring-red-500 py-2 mb-6"
+        />
         <button
           type="submit"
-          className="w-full bg-red-800 text-white py-2 rounded hover:bg-red-700 transition font-semibold"
+          className="w-full py-2 bg-red-700 text-white rounded hover:bg-red-600 transition"
+          disabled={loading}
         >
-          Create Account
+          {loading ? 'Signing up...' : 'Sign Up'}
         </button>
-        <p className="text-sm mt-4 text-center text-gray-600">
+        {message && (
+          <p className="mt-4 text-center text-sm text-gray-700">{message}</p>
+        )}
+        <p className="text-sm mt-6 text-center text-gray-600">
           Already have an account?{' '}
-          <a href="/login" className="text-red-600 underline">
+          <Link to="/login" className="text-red-600 underline font-medium">
             Login
-          </a>
+          </Link>
         </p>
-      </motion.form>
-    </div>
+      </form>
+    </motion.div>
   );
 }

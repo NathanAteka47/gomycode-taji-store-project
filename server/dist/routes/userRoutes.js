@@ -13,4 +13,5 @@ router.post('/login', userController_1.loginUser);
 // Protected
 router.put('/:id', authMiddleware_1.protectUser, userController_1.updateUserProfile);
 router.put('/:id/password', authMiddleware_1.protectUser, userController_1.updateUserPassword);
+router.post('/reset-password', userController_1.resetPassword);
 exports.default = router;

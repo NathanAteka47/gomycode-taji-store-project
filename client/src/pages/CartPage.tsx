@@ -41,7 +41,11 @@ export default function CartPage() {
                 <img
                   src={item.image}
                   alt={item.name}
-                  className="w-20 h-20 object-cover rounded-lg"
+                  className="w-20 h-20 object-cover rounded-lg shadow"
+                  loading="lazy"
+                  onError={(e) => {
+                    (e.currentTarget as HTMLImageElement).src = '/images/placeholder.jpg';
+                  }}
                 />
                 <div>
                   <p className="font-semibold text-lg">{item.name}</p>
