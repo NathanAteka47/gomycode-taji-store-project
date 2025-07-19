@@ -79,7 +79,7 @@ export default function ProductsPage() {
                 <p className="text-center text-gray-600 text-lg font-medium">No products matched your search.</p>
               </div>
             ) : (
-              filteredProducts.map(product => (
+              filteredProducts.map((product: IProduct) => (
                 <motion.div
                   key={product._id}
                   whileHover={{ scale: 1.05 }}
