@@ -23,8 +23,15 @@ export default function LoginPage() {
         password,
       });
       if (response.data?.token) {
+        // Store user data and token in localStorage
+        localStorage.setItem('tajiUserToken', response.data.token);
+        localStorage.setItem('tajiUser', JSON.stringify(response.data.user));
+        
         setMessage('✅ Login successful! Redirecting...');
-        setTimeout(() => navigate('/'), 1500);
+        setTimeout(() => {
+          navigate('/');
+          window.location.reload(); // Refresh the page to update navbar state
+        }, 1500);
       } else {
         setMessage('❌ Login failed. Please try again.');
       }

@@ -1,10 +1,12 @@
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '../store';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { clearCart } from '../store/cartSlice';
 
 export default function PaymentDetailsPage() {
   const cart = useSelector((state: RootState) => state.cart.items);
+  const dispatch = useDispatch();
   const [mpesaCode, setMpesaCode] = useState('');
   const navigate = useNavigate();
 
@@ -24,8 +26,9 @@ export default function PaymentDetailsPage() {
     const whatsappURL = `https://wa.me/254713195195?text=${encodedMessage}`;
 
     window.open(whatsappURL, '_blank');
+    dispatch(clearCart()); // Clear the cart
     alert('Order submitted! Please wait for a call within 5 minutes.');
-    navigate('/');
+    navigate('/products'); // Redirect to products page
   };
 
   return (
