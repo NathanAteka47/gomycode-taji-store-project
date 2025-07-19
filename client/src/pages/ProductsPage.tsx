@@ -4,32 +4,33 @@ import { IProduct } from '../types';
 import ProductCard from '../components/ProductCard';
 import SkeletonCard from '../components/SkeletonCard';
 import { motion } from 'framer-motion';
+import { OptimizedImage } from '../components/OptimizedImage';
+import { useQuery, QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 const VITE_API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5001';
 
+const fetchProducts = async () => {
+  const res = await axios.get(`${VITE_API_BASE_URL}/api/products`);
+  if (!Array.isArray(res.data)) throw new Error('Expected array of products.');
+  return res.data;
+};
+
 export default function ProductsPage() {
-  const [products, setProducts] = useState<IProduct[]>([]);
-  const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
+  const {
+    data: products = [],
+    isLoading,
+    isFetching,
+    error,
+  } = useQuery({
+    queryKey: ['products'],
+    queryFn: fetchProducts,
+    staleTime: 1000 * 60 * 5, // 5 minutes
+    cacheTime: 1000 * 60 * 30, // 30 minutes
+    refetchOnWindowFocus: false,
+  });
 
-  useEffect(() => {
-    axios.get(`${VITE_API_BASE_URL}/api/products`)
-      .then(res => {
-        if (Array.isArray(res.data)) {
-          setProducts(res.data);
-        } else {
-          console.error('Expected array of products.');
-        }
-      })
-      .catch(err => {
-        console.error('Error fetching products:', err.message);
-      })
-      .finally(() => {
-        setLoading(false);
-      });
-  }, []);
-
-  const filteredProducts = products.filter(product =>
+  const filteredProducts = products.filter((product: IProduct) =>
     product.name.toLowerCase().includes(search.toLowerCase())
   );
 
@@ -53,7 +54,7 @@ export default function ProductsPage() {
         />
       </div>
 
-      {loading ? (
+      {(isLoading || isFetching) ? (
         <>
           {/* Spinner */}
           <div className="flex justify-center mb-8">
@@ -76,7 +77,7 @@ export default function ProductsPage() {
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-5 gap-5">
             {filteredProducts.length === 0 ? (
               <div className="col-span-full flex flex-col items-center justify-center py-12">
-                <img src="/images/placeholder.jpg" alt="No products" className="w-32 h-32 mb-4 opacity-60" />
+                <OptimizedImage src="/images/placeholder.jpg" alt="No products" className="w-32 h-32 mb-4 opacity-60" />
                 <p className="text-center text-gray-600 text-lg font-medium">No products matched your search.</p>
               </div>
             ) : (

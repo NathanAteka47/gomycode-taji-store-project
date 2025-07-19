@@ -7,6 +7,7 @@ import {
 } from '../store/cartSlice';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
+import { OptimizedImage } from '../components/OptimizedImage';
 
 export default function CartPage() {
   const cart = useSelector((state: RootState) => state.cart.items);
@@ -38,14 +39,12 @@ export default function CartPage() {
               className="flex flex-col md:flex-row justify-between items-center border rounded-lg p-4 shadow-sm hover:shadow-md transition"
             >
               <div className="flex items-center gap-4 w-full md:w-1/3">
-                <img
+                <OptimizedImage
                   src={item.image}
                   alt={item.name}
                   className="w-20 h-20 object-cover rounded-lg shadow"
+                  fallbackSrc="/images/placeholder.jpg"
                   loading="lazy"
-                  onError={(e) => {
-                    (e.currentTarget as HTMLImageElement).src = '/images/placeholder.jpg';
-                  }}
                 />
                 <div>
                   <p className="font-semibold text-lg">{item.name}</p>

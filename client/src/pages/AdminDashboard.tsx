@@ -5,6 +5,7 @@ import AddWorkerForm from '../components/AddWorkerForm';
 import WorkerList from '../components/WorkerList';
 // import PosPage from '../components/Pospage';
 import { motion } from 'framer-motion';
+import { OptimizedImage } from '../components/OptimizedImage';
 const VITE_API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5001';;
 
 interface Product {
@@ -96,11 +97,11 @@ export default function AdminDashboard() {
                   className="border p-4 rounded-lg shadow-md bg-white hover:shadow-xl transition duration-300"
                   whileHover={{ scale: 1.02 }}
                 >
-                  <img
+                  <OptimizedImage
                     src={product.image}
                     alt={product.name}
-                    onError={(e) => ((e.target as HTMLImageElement).src = '/images/placeholder.jpg')}
                     className="w-full h-40 object-cover rounded mb-4 shadow"
+                    fallbackSrc="/images/placeholder.jpg"
                     loading="lazy"
                   />
                   <h3 className="font-bold text-lg">{product.name}</h3>

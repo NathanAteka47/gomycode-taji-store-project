@@ -3,6 +3,7 @@ import { FaShoppingCart, FaBars, FaTimes } from "react-icons/fa";
 import { useSelector } from "react-redux";
 import { RootState } from "../store";
 import { useEffect, useState } from "react";
+import { OptimizedImage } from './OptimizedImage';
 
 export default function Navbar() {
   const navigate = useNavigate();
@@ -129,7 +130,7 @@ export default function Navbar() {
               <ul className="divide-y divide-gray-200 max-h-48 overflow-y-auto">
                 {cart.slice(0, 4).map((item: any) => (
                   <li key={item._id} className="py-2 flex items-center gap-2">
-                    <img src={item.image} alt={item.name} className="w-10 h-10 object-cover rounded" onError={(e) => { (e.currentTarget as HTMLImageElement).src = '/images/placeholder.jpg'; }} />
+                    <OptimizedImage src={item.image} alt={item.name} className="w-10 h-10 object-cover rounded" fallbackSrc="/images/placeholder.jpg" loading="lazy" />
                     <span className="flex-1 text-sm">{item.name}</span>
                     <span className="text-xs font-bold">x{item.qty}</span>
                   </li>

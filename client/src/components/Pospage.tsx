@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { motion } from 'framer-motion';
+import { OptimizedImage } from './OptimizedImage';
 const VITE_API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5001';;
 
 interface Product {
@@ -113,7 +114,7 @@ export default function PosPage() {
               onClick={() => addItem(product)}
               className="border rounded shadow hover:shadow-md p-2 flex flex-col items-center bg-white hover:bg-red-50"
             >
-              <img src={product.image} alt={product.name} className="w-20 h-20 object-cover mb-2 rounded shadow" loading="lazy" onError={(e) => { (e.currentTarget as HTMLImageElement).src = '/images/placeholder.jpg'; }} />
+              <OptimizedImage src={product.image} alt={product.name} className="w-20 h-20 object-cover mb-2 rounded shadow" fallbackSrc="/images/placeholder.jpg" loading="lazy" />
               <p className="text-sm font-medium">{product.name}</p>
               <p className="text-xs font-bold">Ksh {product.price}</p>
             </button>

@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import axios from 'axios';
 import { motion } from 'framer-motion';
+import { OptimizedImage } from './OptimizedImage';
 
 const VITE_API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5001';
 
@@ -62,7 +63,7 @@ export default function AddProductForm() {
       <label htmlFor="image" className="block text-sm font-medium text-gray-700 mb-1">Image URL</label>
       <input type="text" id="image" name="image" placeholder="Image URL" className="w-full mb-4 p-2 border rounded" onChange={handleChange} value={form.image} required />
       {form.image && (
-        <img src={form.image} alt="Preview" className="w-24 h-24 object-cover rounded mb-4 border" onError={(e) => { (e.currentTarget as HTMLImageElement).src = '/images/placeholder.jpg'; }} />
+        <OptimizedImage src={form.image} alt="Preview" className="w-24 h-24 object-cover rounded mb-4 border" fallbackSrc="/images/placeholder.jpg" />
       )}
       <button type="submit" className="w-full bg-red-800 text-white py-2 rounded hover:bg-red-700" disabled={loading}>{loading ? 'Adding...' : 'Add Product'}</button>
       {message && <p className="mt-3 text-center text-sm text-gray-700">{message}</p>}

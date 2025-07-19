@@ -4,6 +4,7 @@ import { useDispatch } from 'react-redux';
 import { addToCart } from '../store/cartSlice';
 import { motion } from 'framer-motion';
 import { FaStar } from 'react-icons/fa';
+import { OptimizedImage } from './OptimizedImage';
 
 export default function ProductCard(product: IProduct) {
   const dispatch = useDispatch();
@@ -30,14 +31,12 @@ export default function ProductCard(product: IProduct) {
 
       {/* Product Image */}
       <div className="overflow-hidden rounded-xl group">
-        <img
+        <OptimizedImage
           src={product.image}
           alt={product.name}
           className="w-full h-40 object-cover transform group-hover:scale-110 transition duration-300 rounded-xl shadow"
+          fallbackSrc="/images/placeholder.jpg"
           loading="lazy"
-          onError={(e) => {
-            (e.currentTarget as HTMLImageElement).src = '/images/placeholder.jpg';
-          }}
         />
       </div>
 

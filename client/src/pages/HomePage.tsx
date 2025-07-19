@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import HeroSection from '../components/HeroSection';
+import { OptimizedImage } from '../components/OptimizedImage';
 
 <motion.div
   initial={{ opacity: 0, y: 40 }}
@@ -45,7 +46,7 @@ export default function HomePage() {
       { src: '/call.jpg', alt: 'Call to Order' },
     ].map((img, i) => (
       <div key={i} className="relative group overflow-hidden rounded-xl shadow-lg hover:scale-105 transition transform duration-500">
-        <img src={img.src} alt={img.alt} className="w-full h-48 object-cover rounded-xl shadow" loading="lazy" onError={(e) => { (e.currentTarget as HTMLImageElement).src = '/images/placeholder.jpg'; }} />
+        <OptimizedImage src={img.src} alt={img.alt} className="w-full h-48 object-cover rounded-xl shadow" fallbackSrc="/images/placeholder.jpg" loading="lazy" />
         <div className="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition duration-300">
           <p className="text-white text-lg font-semibold">{img.alt}</p>
         </div>

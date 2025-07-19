@@ -4,6 +4,7 @@ import { RootState } from '../store';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { motion } from 'framer-motion';
+import { OptimizedImage } from '../components/OptimizedImage';
 
 const VITE_API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5001';
 
@@ -78,7 +79,7 @@ export default function CheckoutPage() {
         transition={{ duration: 0.6 }}
         className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-red-200 to-red-100"
       >
-        <img src="/images/placeholder.jpg" alt="Empty cart" className="w-32 h-32 mb-4 opacity-60" />
+        <OptimizedImage src="/images/placeholder.jpg" alt="Empty cart" className="w-32 h-32 mb-4 opacity-60" />
         <p className="text-lg text-gray-600 mb-4">Your cart is empty.</p>
       </motion.div>
     );
