@@ -16,7 +16,7 @@ const HeroSection = () => {
     }, 4000); // 4 seconds per slide
 
     return () => clearInterval(interval);
-  }, []);
+  }, [images.length]);
 
   return (
     <header className="relative h-[80vh] text-white flex items-center justify-center overflow-hidden">

@@ -64,7 +64,7 @@ export default function CheckoutPage() {
         // Optionally clear cart here if you want
         navigate('/payment-details');
       }, 1500);
-    } catch (err) {
+    } catch {
       setMessage('❌ Failed to place order. Please try again.');
     } finally {
       setLoading(false);

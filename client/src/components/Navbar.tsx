@@ -5,18 +5,23 @@ import { RootState } from "../store";
 import { useEffect, useState } from "react";
 import { OptimizedImage } from './OptimizedImage';
 
+// Define a CartItem type
+interface CartItem {
+  _id: string;
+  name: string;
+  image: string;
+  price: number;
+  qty: number;
+}
+
 export default function Navbar() {
   const navigate = useNavigate();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userInitials, setUserInitials] = useState("");
   const [mobileOpen, setMobileOpen] = useState(false);
   const [cartOpen, setCartOpen] = useState(false);
-  const cart = useSelector((state: any) => state.cart.items || []);
-  const cartCount = cart.reduce((sum: number, item: any) => sum + item.qty, 0);
-
-  const totalItems = useSelector((state: RootState) =>
-    state.cart.items.reduce((sum, item) => sum + item.qty, 0)
-  );
+  const cart = useSelector((state: RootState) => state.cart.items) as CartItem[];
+  const cartCount = cart.reduce((sum: number, item: CartItem) => sum + item.qty, 0);
 
   useEffect(() => {
     const storedUser = localStorage.getItem("tajiUser");
@@ -128,7 +133,7 @@ export default function Navbar() {
             >
               <h4 className="font-bold mb-2">Cart Preview</h4>
               <ul className="divide-y divide-gray-200 max-h-48 overflow-y-auto">
-                {cart.slice(0, 4).map((item: any) => (
+                {cart.slice(0, 4).map((item: CartItem) => (
                   <li key={item._id} className="py-2 flex items-center gap-2">
                     <OptimizedImage src={item.image} alt={item.name} className="w-10 h-10 object-cover rounded" fallbackSrc="/images/placeholder.jpg" loading="lazy" />
                     <span className="flex-1 text-sm">{item.name}</span>

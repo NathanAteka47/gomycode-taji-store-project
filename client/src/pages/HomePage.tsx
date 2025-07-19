@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom';
+
 import { motion } from 'framer-motion';
 import HeroSection from '../components/HeroSection';
 import { OptimizedImage } from '../components/OptimizedImage';

@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
 import { motion } from 'framer-motion';
-import { FaEye, FaEyeSlash } from 'react-icons/fa';
 const VITE_API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5001';;
 
 export default function SignupPage() {
@@ -10,20 +9,12 @@ export default function SignupPage() {
   const [phoneNumber, setPhoneNumber] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const [showPassword, setShowPassword] = useState(false);
-  const [strength, setStrength] = useState('');
+  const [showPassword] = useState(false);
   const [message, setMessage] = useState('');
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   
-  const checkStrength = (pwd: string) => {
-    if (pwd.length < 6) return setStrength('Weak');
-    if (/[A-Z]/.test(pwd) && /[0-9]/.test(pwd) && /[^A-Za-z0-9]/.test(pwd)) {
-      setStrength('Strong');
-    } else {
-      setStrength('Moderate');
-    }
-  };
+  // Password strength check removed as 'strength' is unused
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -45,7 +36,7 @@ export default function SignupPage() {
       } else {
         setMessage('❌ Signup failed. Please try again.');
       }
-    } catch (err: any) {
+    } catch {
       setMessage('❌ Signup failed. Phone number may already be registered.');
     } finally {
       setLoading(false);
@@ -93,7 +84,7 @@ export default function SignupPage() {
           value={password}
           onChange={(e) => {
             setPassword(e.target.value);
-            checkStrength(e.target.value);
+            // checkStrength(e.target.value); // Removed as strength is unused
           }}
           required
           className="w-full border-b-2 border-red-400 focus:outline-none focus:ring-2 focus:ring-red-500 py-2 mb-4"

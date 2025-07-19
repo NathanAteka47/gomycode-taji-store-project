@@ -1,11 +1,11 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import axios from 'axios';
 import { IProduct } from '../types';
 import ProductCard from '../components/ProductCard';
 import SkeletonCard from '../components/SkeletonCard';
 import { motion } from 'framer-motion';
 import { OptimizedImage } from '../components/OptimizedImage';
-import { useQuery, QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 
 const VITE_API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5001';
 
@@ -19,9 +19,7 @@ export default function ProductsPage() {
   const [search, setSearch] = useState('');
   const {
     data: products = [],
-    isLoading,
     isFetching,
-    error,
   } = useQuery({
     queryKey: ['products'],
     queryFn: fetchProducts,
@@ -54,7 +52,7 @@ export default function ProductsPage() {
         />
       </div>
 
-      {(isLoading || isFetching) ? (
+      {(isFetching) ? (
         <>
           {/* Spinner */}
           <div className="flex justify-center mb-8">

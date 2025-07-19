@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
 import { motion } from 'framer-motion';
-import { FaEye, FaEyeSlash } from "react-icons/fa";
 // import { VITE_API_BASE_URL } from "../constants/URLs";
 const VITE_API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5001';
 
@@ -35,7 +34,7 @@ export default function LoginPage() {
       } else {
         setMessage('❌ Login failed. Please try again.');
       }
-    } catch (err: any) {
+    } catch {
       setMessage('❌ Invalid phone number or password.');
     } finally {
       setLoading(false);

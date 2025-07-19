@@ -1,25 +1,7 @@
-import { createContext, useState} from 'react';
-import type { ReactNode } from 'react';
+import { CartContext } from './CartContextDef';
+import { useState, ReactNode } from 'react';
+import type { HomeItem } from './CartContextDef';
 
-// Define item type
-export interface HomeItem {
-  id: string;
-  name: string;
-  price: number;
-}
-
-// Define CartContext type
-interface CartContextType {
-  cart: HomeItem[];
-  cartCount: number;
-  addToCart: (item: HomeItem) => void;
-  removeFromCart: (id: string) => void;
-}
-
-// Create context with correct default type
-export const CartContext = createContext<CartContextType | undefined>(undefined);
-
-// Provider component
 export const CartProvider = ({ children }: { children: ReactNode }) => {
   const [cart, setCart] = useState<HomeItem[]>([]);
 
