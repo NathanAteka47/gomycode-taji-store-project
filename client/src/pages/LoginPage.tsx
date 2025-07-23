@@ -90,6 +90,12 @@ export default function LoginPage() {
             Reset Password
           </Link>
         </p>
+                <p className="text-sm mt-6 text-center text-gray-600">
+          Don't have an account? Sign Up{' '}
+          <Link to="/signup" className="text-red-600 underline font-medium">
+            Sign Up
+          </Link>
+        </p>
       </form>
     </motion.div>
   );
